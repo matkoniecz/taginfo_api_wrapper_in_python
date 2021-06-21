@@ -1,5 +1,9 @@
 # Example Package
 
-This is a simple example package. You can use
-[Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-to write your content.
+Serving as a skeleton for a real one.
+
+```
+import example_pkg_matkoniecz
+
+print(example_pkg_matkoniecz.lorem_ipsum.text())
+```
