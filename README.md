@@ -3,7 +3,7 @@
 Serving as a skeleton for a real one.
 
 ```
-import example_pkg_matkoniecz
+import taginfo
 
-print(example_pkg_matkoniecz.lorem_ipsum.text())
+print(taginfo.lorem_ipsum.text())
 ```
