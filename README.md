@@ -1,9 +1,9 @@
-# Example Package
-
-Serving as a skeleton for a real one.
+# Taginfo
 
 ```
 import taginfo
 
-print(taginfo.lorem_ipsum.text())
+key = "landuse"
+for value in taginfo.query.values_of_key(key):
+    print(key, "=", value)
 ```

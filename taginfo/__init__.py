@@ -1,1 +1,1 @@
-import taginfo.lorem_ipsum
+import taginfo.query
