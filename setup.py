@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="taginfo",
-    version="0.0.2",
+    version="0.0.3",
     author="Mateusz Konieczny",
     description="A small wrapper around taginfo API",
     long_description=long_description,
