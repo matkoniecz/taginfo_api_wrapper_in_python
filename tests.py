@@ -38,7 +38,7 @@ class Tests(unittest.TestCase):
         show_popular_tags_not_supported_by_project(project, "natural", [], 6_000)
         show_popular_tags_not_supported_by_project(project, "leisure", [], 5_000)
         show_popular_tags_not_supported_by_project(project, "amenity", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "landuse", [], 5_000)
+        show_popular_tags_not_supported_by_project(project, "landuse", [], 20_000)
         show_popular_tags_not_supported_by_project(project, "power", [], 2_000)
         show_popular_tags_not_supported_by_project(project, "place", [], 10_000)
         show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed"], 5_000)
