@@ -45,7 +45,7 @@ class Tests(unittest.TestCase):
         show_popular_tags_not_supported_by_project(project, "barrier", [], 3_000)
         show_popular_tags_not_supported_by_project(project, "highway", ["proposed", "no"], 1_000)
         show_popular_tags_not_supported_by_project(project, "tourism", ["yes"], 1_000)
-        show_popular_tags_not_supported_by_project(project, "waterway", [], 5_000)
+        show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 5_000)
 
     def test_basic_math(self):
         self.assertEqual(2-2, 0)
