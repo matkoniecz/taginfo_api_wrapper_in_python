@@ -2,6 +2,8 @@
 
 This project exists to access magnificent [taginfo](https://taginfo.openstreetmap.org/) maintained by Jochen Topf.
 
+It is an unofficial Python wrapper over available API.
+
 It is a Python wrapper for a tiny part of [taginfo API](https://taginfo.openstreetmap.org/taginfo/apidoc) that I use in my projects.
 
 Note that the taginfo API is intended for the use of the OpenStreetMap community. Do not use it for other services. ([source](https://wiki.openstreetmap.org/wiki/Taginfo/API))
