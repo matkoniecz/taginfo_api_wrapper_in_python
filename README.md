@@ -68,7 +68,7 @@ show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 
 # Development
 
 Contributions are welcome to cover larger part of taginfo API.
-s
+
 ## Run tests
 
 `python3 -m unittest`
