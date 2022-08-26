@@ -37,6 +37,7 @@ def entries_per_page():
     return 999
 
 def get_page_of_key_values(key, page):
+    # https://taginfo.openstreetmap.org/api/4/key/values?key=surface&sortorder=desc
     url = "https://taginfo.openstreetmap.org/api/4/key/values?key=" + urllib.parse.quote(key) + "&page=" + str(page) + "&rp=" + str(entries_per_page()) + "&sortname=count_all&sortorder=desc"
     return json_response_from_url(url)["data"]
 
