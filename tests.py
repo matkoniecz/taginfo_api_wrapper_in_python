@@ -7,10 +7,13 @@ class Tests(unittest.TestCase):
         print(key, "is used", taginfo.query.count_appearances_of_key(key), "times")
 
     def test_run_readme_code_values_of_key(self):
-        key = "surface"
+        key = "bin"
+        print("all values of specific key:")
         for value in taginfo.query.values_of_key(key):
-            print(key, "=", value)        
+            print(key, "=", value)
         print()
+        key = "surface"
+        print("all popular values of specific key:")
         for entry in taginfo.query.values_of_key_with_data(key):
             if(entry['count'] > 1000):
                 print(key, "=", entry['value'], str(int(entry['count']/1000)) + "k")
