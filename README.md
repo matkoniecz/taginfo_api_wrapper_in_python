@@ -36,6 +36,8 @@ for entry in taginfo.query.values_of_key_with_data(key):
 
 ## Listing popular tags unsupported by iD
 
+See https://github.com/openstreetmap/id-tagging-schema/issues/529 - this is actually used by iD project
+
 ```
 import taginfo
 
