@@ -60,27 +60,55 @@ def show_popular_tags_not_supported_by_project(project, key, excluded_values, th
     for entry in expected_support:
         if entry not in excluded_values:
             link = "https://taginfo.openstreetmap.org/tags/" + key + "=" + entry
-            text = key + " = " + cached_value_info[entry]['value'] + " " + str(int(cached_value_info[entry]['count']/1000)) + "k"
-            linked_markdown_text = "[" + text + "](" + link + ")"
+            text = "`" + key + " = " + cached_value_info[entry]['value'] + "` " + str(int(cached_value_info[entry]['count']/1000)) + "k"
+            linked_markdown_text = "* [ ] [" + text + "](" + link + ")"
             print(linked_markdown_text)
 
 project = "id_editor"
+# keys based on https://wiki.openstreetmap.org/wiki/Map_features
 show_popular_tags_not_supported_by_project(project, "surface", [], 1_000)
 show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
 show_popular_tags_not_supported_by_project(project, "shop", ["yes", "no"], 1_000)
+show_popular_tags_not_supported_by_project(project, "craft", ["yes"
+    "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
+], 1_000)
 show_popular_tags_not_supported_by_project(project, "natural", [
     "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
     ], 10_000)
 show_popular_tags_not_supported_by_project(project, "leisure", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "amenity", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "landuse", [], 20_000)
-show_popular_tags_not_supported_by_project(project, "power", [], 2_000)
+show_popular_tags_not_supported_by_project(project, "power", [
+    "abandoned:tower" # it clearly should be abandoned:power=tower
+], 2_000)
 show_popular_tags_not_supported_by_project(project, "place", [], 10_000)
 show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed"], 5_000)
 show_popular_tags_not_supported_by_project(project, "barrier", [], 3_000)
 show_popular_tags_not_supported_by_project(project, "highway", ["proposed", "no"], 1_000)
 show_popular_tags_not_supported_by_project(project, "tourism", ["yes"], 1_000)
 show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 5_000)
+show_popular_tags_not_supported_by_project(project, "man_made", [
+    "advertising", # nowadays advertising is added without that
+], 3_000)
+show_popular_tags_not_supported_by_project(project, "advertising", [], 3_000)
+show_popular_tags_not_supported_by_project(project, "aerialway", [], 1_000)
+show_popular_tags_not_supported_by_project(project, "aeroway", [], 1_000)
+show_popular_tags_not_supported_by_project(project, "boundary", [], 15_000)
+show_popular_tags_not_supported_by_project(project, "emergency", [], 1_000)
+show_popular_tags_not_supported_by_project(project, "cycleway", [], 5_000)
+show_popular_tags_not_supported_by_project(project, "cycleway:left", [], 5_000)
+show_popular_tags_not_supported_by_project(project, "cycleway:right", [], 5_000)
+show_popular_tags_not_supported_by_project(project, "cycleway:both", [], 5_000)
+show_popular_tags_not_supported_by_project(project, "historic", [], 10_000)
+show_popular_tags_not_supported_by_project(project, "military", [], 2_000)
+show_popular_tags_not_supported_by_project(project, "office", [
+    "logistics" # debris left by User:RTFM
+], 2_000)
+show_popular_tags_not_supported_by_project(project, "route", [], 2_000)
+show_popular_tags_not_supported_by_project(project, "sport", [
+    "cricket_nets", # not an actual sport
+], 2_500)
+show_popular_tags_not_supported_by_project(project, "healthcare", ["hospital", "pharmacy", "doctor", "clinic", "dentist"], 1_000)
 ```
 
 ## Historic data
