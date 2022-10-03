@@ -16,7 +16,7 @@ Note that the taginfo API is intended for the use of the OpenStreetMap community
 ```
 import taginfo
 
-key = "landuse"
+key = "surface"
 for value in taginfo.query.values_of_key(key):
     print(key, "=", value)
 print()

@@ -3,7 +3,7 @@ import taginfo
 
 class Tests(unittest.TestCase):
     def test_run_readme_code_values_of_key(self):
-        key = "landuse"
+        key = "surface"
         for value in taginfo.query.values_of_key(key):
             print(key, "=", value)        
         print()
