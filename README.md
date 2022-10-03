@@ -11,6 +11,15 @@ Note that the taginfo API is intended for the use of the OpenStreetMap community
 # Examples
 <!-- in case of editing or adding samples here, change also tests -->
 
+## How often given key is used?
+
+```
+import taginfo
+
+key = "name:ab"
+print(key, "is used", taginfo.query.count_appearances_of_key(key), "times")
+```
+
 ## Listing popular values for key
 
 ```

@@ -45,6 +45,18 @@ def get_page_of_tags_used_by_project(project, page):
     url = "https://taginfo.openstreetmap.org/api/4/project/tags?project=" + project + "&page=" + str(page) + "&rp=" + str(entries_per_page()) + "&sortname=tag&sortorder=asc"
     return json_response_from_url(url)["data"]
 
+def count_appearances_of_tag(key, value):
+    # https://taginfo.openstreetmap.org/api/4/tag/stats?key=building&value=yes
+    url = "https://taginfo.openstreetmap.org/api/4/tag/stats?key=" + urllib.parse.quote(key) + "&value=" + urllib.parse.quote(value)
+    data = json_response_from_url(url)
+    return data['data'][0]['count']
+
+def count_appearances_of_key(key):
+    # https://taginfo.openstreetmap.org/api/4/tag/stats?key=building
+    url = "https://taginfo.openstreetmap.org/api/4/key/stats?key=" + urllib.parse.quote(key)
+    data = json_response_from_url(url)
+    return data['data'][0]['count']
+
 def json_response_from_url(url):
     url = url.replace(" ", "%20")
     try:

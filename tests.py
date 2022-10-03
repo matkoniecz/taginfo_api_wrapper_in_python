@@ -2,6 +2,10 @@ import unittest
 import taginfo
 
 class Tests(unittest.TestCase):
+    def test_run_readme_code_key_usage_count(self):
+        key = "name:ab"
+        print(key, "is used", taginfo.query.count_appearances_of_key(key), "times")
+
     def test_run_readme_code_values_of_key(self):
         key = "surface"
         for value in taginfo.query.values_of_key(key):
