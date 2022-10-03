@@ -2,6 +2,7 @@ import urllib
 import urllib.request
 import urllib.parse
 import json
+import datetime
 
 def values_of_key(key):
     page = 1
@@ -56,6 +57,47 @@ def count_appearances_of_key(key):
     url = "https://taginfo.openstreetmap.org/api/4/key/stats?key=" + urllib.parse.quote(key)
     data = json_response_from_url(url)
     return data['data'][0]['count']
+
+def get_all_raw_data_about_key_use(key):
+    url = "https://taginfo.openstreetmap.org/api/4/key/chronology?key=" + urllib.parse.quote(key)
+    data = json_response_from_url(url)
+    return data['data']
+
+def get_all_raw_data_about_tag_use(key, value):
+    # https://taginfo.openstreetmap.org/tags/?key=type&value=associated_address#chronology
+    # https://taginfo.openstreetmap.org/api/4/tag/chronology?key=type&value=associated_address
+    # https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_tag_chronology
+    url = "https://taginfo.openstreetmap.org/api/4/tag/chronology?key=" + urllib.parse.quote(key) + "&value=" + urllib.parse.quote(value)
+    data = json_response_from_url(url)
+    return data['data']
+
+def count_new_appearances_of_tag_historic_data_from_deltas(data, days_ago):
+    initial_day = datetime.datetime.now() - datetime.timedelta(days=days_ago)
+    if data == []:
+        return None
+    diff = 0
+    for offset in range(1, days_ago):
+        if len(data) < offset:
+            break
+        taginfo_format = '%Y-%m-%d'
+        datetime_of_datapoint = datetime.datetime.strptime(data[-offset]["date"], taginfo_format)
+        if(datetime_of_datapoint < initial_day):
+            # gaps are possiple in cases where tag does not changed value
+            # https://taginfo.openstreetmap.org/tags/?key=type&value=associated_address#chronology
+            # https://taginfo.openstreetmap.org/api/4/tag/chronology?key=type&value=associated_address
+            break
+        diff += data[-offset]["nodes"]
+        diff += data[-offset]["ways"]
+        diff += data[-offset]["relations"]
+    return diff
+
+def count_new_appearances_of_tag_historic_data(key, value, days_ago):
+    data = get_all_raw_data_about_tag_use(key, value)
+    return count_new_appearances_of_tag_historic_data_from_deltas(data, days_ago)
+
+def count_new_appearances_of_key_historic_data(key, days_ago):
+    data = get_all_raw_data_about_key_use(key)
+    return count_new_appearances_of_tag_historic_data_from_deltas(data, days_ago)
 
 def json_response_from_url(url):
     url = url.replace(" ", "%20")

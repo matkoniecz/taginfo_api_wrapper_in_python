@@ -76,6 +76,18 @@ show_popular_tags_not_supported_by_project(project, "tourism", ["yes"], 1_000)
 show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 5_000)
 ```
 
+## Historic data
+
+```
+import taginfo
+
+print("Intended to show useful info (and maybe motivate you to talk to this mappers and ask whether they meant surface=concrete:")
+print(taginfo.query.count_new_appearances_of_tag_historic_data("surface", "cement", 60), "net change for surface=cement within last 60 days (this tag appears to be duplicating surface=concrete)")
+print()
+print("intended to show that such short-term queries are likely to be a problem, as taginfo may have delay in updating and last few days may be often unavailable:")
+print(taginfo.query.count_new_appearances_of_key_historic_data("building", 1), "new building=* objects since yesterday")
+```
+
 # Development
 
 Contributions are welcome to cover larger part of taginfo API.
