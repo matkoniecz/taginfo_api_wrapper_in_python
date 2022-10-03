@@ -89,7 +89,8 @@ show_popular_tags_not_supported_by_project(project, "tourism", ["yes"], 1_000)
 show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 5_000)
 show_popular_tags_not_supported_by_project(project, "man_made", [
     "advertising", # nowadays advertising is added without that
-], 3_000)
+    "beam", # undocumented, unclear, stagnated tag use
+], 5_000)
 show_popular_tags_not_supported_by_project(project, "advertising", [], 3_000)
 show_popular_tags_not_supported_by_project(project, "aerialway", [], 1_000)
 show_popular_tags_not_supported_by_project(project, "aeroway", [], 1_000)
@@ -131,7 +132,7 @@ while not finished:
             finished = True
             break
         key = entry["key"]
-        banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:"]
+        banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:", "LINZ:"]
         matches_blacklisted = False
         for prefix in banned_key_prefix_indicating_import_garbage:
             if key.find(prefix) == 0:
@@ -139,7 +140,12 @@ while not finished:
                 break
         if matches_blacklisted:
             continue
-        if key in ["created_by"]: # deprecated/discardable, not listed in iD taginfo project
+        if key in [
+            "created_by", # deprecated/discardable, not listed in iD taginfo project
+            "is_in", # deprecated and unwanted
+            "name_1", # weird tagging promoted by old iD versions
+            "addr:TW:dataset", # unwanted import tag
+        ]:
             continue
         if key not in supported:
             formatted_count = str(int(entry["count_all"]/1000))+"k"
