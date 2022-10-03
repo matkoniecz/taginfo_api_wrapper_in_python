@@ -50,6 +50,7 @@ def show_popular_tags_not_supported_by_project(project, key, excluded_values, th
             print(linked_markdown_text)
 
 project = "id_editor"
+show_popular_tags_not_supported_by_project(project, "surface", [], 1_000)
 show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
 show_popular_tags_not_supported_by_project(project, "shop", ["yes", "no"], 1_000)
 show_popular_tags_not_supported_by_project(project, "natural", [], 10_000)
