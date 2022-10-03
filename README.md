@@ -65,7 +65,9 @@ project = "id_editor"
 show_popular_tags_not_supported_by_project(project, "surface", [], 1_000)
 show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
 show_popular_tags_not_supported_by_project(project, "shop", ["yes", "no"], 1_000)
-show_popular_tags_not_supported_by_project(project, "natural", [], 10_000)
+show_popular_tags_not_supported_by_project(project, "natural", [
+    "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
+    ], 10_000)
 show_popular_tags_not_supported_by_project(project, "leisure", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "amenity", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "landuse", [], 20_000)
