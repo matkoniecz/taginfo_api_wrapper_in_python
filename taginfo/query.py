@@ -37,12 +37,33 @@ def tagging_used_by_project(project):
 def entries_per_page():
     return 999
 
+def throw_exception_on_suspicious_page_index(page):
+    if page == 0:
+        raise ValueError("see https://taginfo.openstreetmap.org/taginfo/apidoc - pages are starting from 1, page=0 will (I think) disable paging and list all values") # TODO: investigate
+    # TODO - test also negative, nonnumeric?
+
+def get_url_for_all_keys(page, extra_query_part=""):
+    throw_exception_on_suspicious_page_index(page)
+    # https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=100&sortname=count_all&sortorder=desc
+    return "https://taginfo.openstreetmap.org/api/4/keys/all?page=" + str(page) + "&rp=" + str(entries_per_page()) + "&sortname=count_all&sortorder=desc" + extra_query_part
+
+def get_page_of_all_keys(page):
+    # https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all
+    return json_response_from_url(get_url_for_all_keys(page))["data"]
+
+def get_page_of_all_keys_with_wiki_page(page):
+    # https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_keys_all
+    # https://taginfo.openstreetmap.org/api/4/keys/all?page=1&rp=100&sortname=count_all&sortorder=desc&filter=in_wiki
+    return json_response_from_url(get_url_for_all_keys(page, "&filter=in_wiki"))["data"]
+
 def get_page_of_key_values(key, page):
+    throw_exception_on_suspicious_page_index(page)
     # https://taginfo.openstreetmap.org/api/4/key/values?key=surface&sortorder=desc
     url = "https://taginfo.openstreetmap.org/api/4/key/values?key=" + urllib.parse.quote(key) + "&page=" + str(page) + "&rp=" + str(entries_per_page()) + "&sortname=count_all&sortorder=desc"
     return json_response_from_url(url)["data"]
 
 def get_page_of_tags_used_by_project(project, page):
+    throw_exception_on_suspicious_page_index(page)
     url = "https://taginfo.openstreetmap.org/api/4/project/tags?project=" + project + "&page=" + str(page) + "&rp=" + str(entries_per_page()) + "&sortname=tag&sortorder=asc"
     return json_response_from_url(url)["data"]
 

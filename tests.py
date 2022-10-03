@@ -85,6 +85,46 @@ class Tests(unittest.TestCase):
         ], 2_500)
         show_popular_tags_not_supported_by_project(project, "healthcare", ["hospital", "pharmacy", "doctor", "clinic", "dentist"], 1_000)
 
+    def test_run_readme_code_popular_keys_not_used_in_project(self):
+        # no issue created for it at https://github.com/openstreetmap/id-tagging-schema/issues
+        # right now it provides no useful info (more ntries need to be skipped or verified)
+        project = "id_editor"
+        supported = []
+        threshold = 500_000
+        expected_support = []
+        for entry in taginfo.query.tagging_used_by_project(project):
+            if entry["key"] not in supported:
+                supported.append(entry["key"]) # will not catch cases where only specific value is supported
+        page = 1
+        finished = False
+        while not finished:
+            for entry in taginfo.query.get_page_of_all_keys_with_wiki_page(page):
+                if(entry['count_all'] < threshold):
+                    finished = True
+                    break
+                key = entry["key"]
+                banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:"]
+                matches_blacklisted = False
+                for prefix in banned_key_prefix_indicating_import_garbage:
+                    if key.find(prefix) == 0:
+                        matches_blacklisted = True
+                        break
+                if matches_blacklisted:
+                    continue
+                if key in ["created_by"]: # deprecated/discardable, not listed in iD taginfo project
+                    continue
+                if key not in supported:
+                    formatted_count = str(int(entry["count_all"]/1000))+"k"
+                    print(key, formatted_count)
+                    expected_support.append({"key": key, "count": formatted_count})
+            page += 1
+
+        for entry in expected_support:
+            link = "https://taginfo.openstreetmap.org/keys/" + entry["key"]
+            text = "`" + entry["key"] + "` " + entry["count"]
+            linked_markdown_text = "[" + text + "](" + link + ")"
+            print(linked_markdown_text)
+
     def test_run_readme_popularity(self):
         print("Intended to show useful info (and maybe motivate you to talk to this mappers and ask whether they meant surface=concrete:")
         print(taginfo.query.count_new_appearances_of_tag_historic_data("surface", "cement", 60), "net change for surface=cement within last 60 days (this tag appears to be duplicating surface=concrete)")
