@@ -107,3 +107,10 @@ def json_response_from_url(url):
     except UnicodeEncodeError:
         print("failed to process", url)
         raise
+    except urllib.error.URLError as e:
+        print(url)
+        print(url)
+        if "connection timed out"  in str(e):
+            return json_response_from_url(url)
+        else:
+            raise
