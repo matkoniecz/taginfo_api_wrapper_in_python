@@ -8,6 +8,10 @@ It is a Python wrapper for a tiny part of [taginfo API](https://taginfo.openstre
 
 Note that the taginfo API is intended for the use of the OpenStreetMap community. Do not use it for other purposes. ([source](https://wiki.openstreetmap.org/wiki/Taginfo/API)) As taginfo is open source you can deploy own service of needed.
 
+# Installation
+
+Like any other python package: `pip install taginfo`
+
 # Examples
 <!-- in case of editing or adding samples here, change also tests -->
 
