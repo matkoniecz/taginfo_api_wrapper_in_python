@@ -34,6 +34,16 @@ def tagging_used_by_project(project):
         if len(data) < entries_per_page():
             break
 
+def wiki_pages_of_key(key):
+    # https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_key_wiki_pages
+    # https://taginfo.openstreetmap.org/api/4/key/wiki_pages?key=highway
+    return json_response_from_url("https://taginfo.openstreetmap.org//api/4/key/wiki_pages?key=" + key)["data"]
+
+def wiki_pages_of_tag(key, value):
+    # https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_tag_wiki_pages
+    # https://taginfo.openstreetmap.org/api/4/tag/wiki_pages?key=highway&value=residential
+    return json_response_from_url("https://taginfo.openstreetmap.org//api/4/tag/wiki_pages?key=" + key + "&value=" + value)["data"]
+
 def entries_per_page():
     return 999
 
