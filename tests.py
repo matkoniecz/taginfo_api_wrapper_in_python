@@ -41,13 +41,14 @@ class Tests(unittest.TestCase):
 
         project = "id_editor"
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
-        show_popular_tags_not_supported_by_project(project, "surface", [], 1_000)
+        show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement", "granite", "paving_stones:30"], 2_000)
         show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
         show_popular_tags_not_supported_by_project(project, "shop", ["yes", "no"], 1_000)
-        show_popular_tags_not_supported_by_project(project, "craft", ["yes"
+        show_popular_tags_not_supported_by_project(project, "craft", ["yes",
             "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
         ], 1_000)
         show_popular_tags_not_supported_by_project(project, "natural", [
+            "land", # note that very large part is remain of broken CanVec importing, see say https://www.openstreetmap.org/node/3524361691 - maybe at least nodes can be mass deleted, obviously after consulting Canadian community - though some of them indicate not yet mapped islets). Though I think that this value can be anyway excluded from listing here. Though maybe it can be a validator warning?
             "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
             ], 10_000)
         show_popular_tags_not_supported_by_project(project, "leisure", [], 5_000)
@@ -55,7 +56,7 @@ class Tests(unittest.TestCase):
         show_popular_tags_not_supported_by_project(project, "landuse", [], 20_000)
         show_popular_tags_not_supported_by_project(project, "power", [
             "abandoned:tower" # it clearly should be abandoned:power=tower
-        ], 2_000)
+        ], 4_000)
         show_popular_tags_not_supported_by_project(project, "place", [], 10_000)
         show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed"], 5_000)
         show_popular_tags_not_supported_by_project(project, "barrier", [], 3_000)
@@ -83,6 +84,7 @@ class Tests(unittest.TestCase):
         show_popular_tags_not_supported_by_project(project, "route", [], 2_000)
         show_popular_tags_not_supported_by_project(project, "sport", [
             "cricket_nets", # not an actual sport
+            "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
         ], 2_500)
         show_popular_tags_not_supported_by_project(project, "healthcare", ["hospital", "pharmacy", "doctor", "clinic", "dentist"], 1_000)
 
