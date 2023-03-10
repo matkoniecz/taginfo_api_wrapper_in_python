@@ -140,6 +140,9 @@ class Tests(unittest.TestCase):
         print("intended to show that such short-term queries are likely to be a problem, as taginfo may have delay in updating and last few days may be often unavailable:")
         print(taginfo.query.count_new_appearances_of_key_historic_data("building", 1), "new building=* objects since yesterday")
 
+    def test_handle_nonascii_in_tags(self):
+        taginfo.query.wiki_pages_of_tag("shop", "açaí")
+
     def test_basic_math(self):
         self.assertEqual(2-2, 0)
 
