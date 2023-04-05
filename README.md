@@ -70,7 +70,7 @@ def show_popular_tags_not_supported_by_project(project, key, excluded_values, th
 
 project = "id_editor"
 # keys based on https://wiki.openstreetmap.org/wiki/Map_features
-show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement", "granite", "paving_stones:30"], 2_000)
+show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement", "granite", "paving_stones:30"], 10_000)
 show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
 show_popular_tags_not_supported_by_project(project, "shop", ["yes", "no"], 1_000)
 show_popular_tags_not_supported_by_project(project, "craft", ["yes",
@@ -95,18 +95,19 @@ show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 
 show_popular_tags_not_supported_by_project(project, "man_made", [
     "advertising", # nowadays advertising is added without that
     "beam", # undocumented, unclear, stagnated tag use
-], 5_000)
+    "waterway",
+], 8_000)
 show_popular_tags_not_supported_by_project(project, "advertising", [], 3_000)
 show_popular_tags_not_supported_by_project(project, "aerialway", [], 1_000)
 show_popular_tags_not_supported_by_project(project, "aeroway", [], 1_000)
-show_popular_tags_not_supported_by_project(project, "boundary", [], 15_000)
+show_popular_tags_not_supported_by_project(project, "boundary", ["landuse"], 20_000)
 show_popular_tags_not_supported_by_project(project, "emergency", [], 1_000)
 show_popular_tags_not_supported_by_project(project, "cycleway", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "cycleway:left", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "cycleway:right", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "cycleway:both", [], 5_000)
 show_popular_tags_not_supported_by_project(project, "historic", [], 10_000)
-show_popular_tags_not_supported_by_project(project, "military", [], 2_000)
+show_popular_tags_not_supported_by_project(project, "military", ["yes"], 2_500)
 show_popular_tags_not_supported_by_project(project, "office", [
     "logistics" # debris left by User:RTFM
 ], 2_000)
