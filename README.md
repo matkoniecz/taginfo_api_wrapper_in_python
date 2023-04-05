@@ -117,6 +117,7 @@ show_popular_tags_not_supported_by_project(project, "sport", [
     "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
 ], 2_500)
 show_popular_tags_not_supported_by_project(project, "healthcare", ["hospital", "pharmacy", "doctor", "clinic", "dentist"], 1_000)
+show_popular_tags_not_supported_by_project(project, "cuisine", [], 1_000)
 ```
 
 ## Listing popular keys not supported by iD
