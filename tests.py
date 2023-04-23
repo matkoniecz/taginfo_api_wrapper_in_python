@@ -18,7 +18,7 @@ class Tests(unittest.TestCase):
             if(entry['count'] > 1000):
                 print(key, "=", entry['value'], str(int(entry['count']/1000)) + "k")
 
-    def test_run_readme_code_tags_used_in_project(self):
+    def test_tags_used_in_project(self):
         def show_popular_tags_not_supported_by_project(project, key, excluded_values, threshold):
             expected_support = []
             cached_value_info = {}
