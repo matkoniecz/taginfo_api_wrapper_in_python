@@ -53,7 +53,9 @@ class Tests(unittest.TestCase):
             ], 10_000)
         show_popular_tags_not_supported_by_project(project, "leisure", [], 5_000)
         show_popular_tags_not_supported_by_project(project, "amenity", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "landuse", [], 20_000)
+        show_popular_tags_not_supported_by_project(project, "landuse", [
+            "logging", # simply bad tagging schema
+        ], 30_000)
         show_popular_tags_not_supported_by_project(project, "power", [
             "abandoned:tower" # it clearly should be abandoned:power=tower
         ], 4_000)
@@ -71,7 +73,7 @@ class Tests(unittest.TestCase):
         show_popular_tags_not_supported_by_project(project, "advertising", [], 3_000)
         show_popular_tags_not_supported_by_project(project, "aerialway", [], 1_000)
         show_popular_tags_not_supported_by_project(project, "aeroway", [], 1_000)
-        show_popular_tags_not_supported_by_project(project, "boundary", ["landuse"], 20_000)
+        show_popular_tags_not_supported_by_project(project, "boundary", ["landuse"], 30_000)
         show_popular_tags_not_supported_by_project(project, "emergency", [], 1_000)
         show_popular_tags_not_supported_by_project(project, "cycleway", [], 5_000)
         show_popular_tags_not_supported_by_project(project, "cycleway:left", [], 5_000)
