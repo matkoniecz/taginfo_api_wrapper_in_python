@@ -45,7 +45,12 @@ def wiki_pages_of_tag(key, value):
     return json_response_from_url("https://taginfo.openstreetmap.org//api/4/tag/wiki_pages?key=" + urllib.parse.quote(key) + "&value=" + urllib.parse.quote(value))["data"]
 
 def entries_per_page():
-    return 999
+    # no idea whether promotional_products having different data in 
+    # https://taginfo.openstreetmap.org/api/4/key/values?key=shop&page=2&rp=999&sortname=count_all&sortorder=desc 
+    # and https://taginfo.openstreetmap.org/api/4/key/values?key=shop&page=3&rp=500&sortname=count_all&sortorder=desc 
+    # on 2023-11-22 counts as bug or not
+    # but lets go with apparently fresher cache source
+    return 500
 
 def throw_exception_on_suspicious_page_index(page):
     if page == 0:
@@ -68,7 +73,7 @@ def get_page_of_all_keys_with_wiki_page(page):
 
 def get_page_of_key_values(key, page):
     throw_exception_on_suspicious_page_index(page)
-    # https://taginfo.openstreetmap.org/api/4/key/values?key=surface&sortorder=desc
+    # https://taginfo.openstreetmap.org/api/4/key/values?key=shop&sortorder=desc&page=1&rp=500&sortname=count_all&sortorder=desc
     url = "https://taginfo.openstreetmap.org/api/4/key/values?key=" + urllib.parse.quote(key) + "&page=" + str(page) + "&rp=" + str(entries_per_page()) + "&sortname=count_all&sortorder=desc"
     return json_response_from_url(url)["data"]
 
@@ -130,7 +135,9 @@ def count_new_appearances_of_key_historic_data(key, days_ago):
     data = get_all_raw_data_about_key_use(key)
     return count_new_appearances_of_tag_historic_data_from_deltas(data, days_ago)
 
-def json_response_from_url(url):
+def json_response_from_url(url, debug=False):
+    if debug:
+        print("making query", url)
     url = url.replace(" ", "%20")
     try:
         data = urllib.request.urlopen(url).read()
