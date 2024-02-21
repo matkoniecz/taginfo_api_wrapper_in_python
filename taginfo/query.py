@@ -3,6 +3,7 @@ import urllib.request
 import urllib.parse
 import json
 import datetime
+import time
 
 def values_of_key(key):
     page = 1
@@ -136,19 +137,24 @@ def count_new_appearances_of_key_historic_data(key, days_ago):
     return count_new_appearances_of_tag_historic_data_from_deltas(data, days_ago)
 
 def json_response_from_url(url, debug=False):
-    if debug:
-        print("making query", url)
-    url = url.replace(" ", "%20")
-    try:
-        data = urllib.request.urlopen(url).read()
-        return json.loads(data)
-    except UnicodeEncodeError:
-        print("failed to process", url)
-        raise
-    except urllib.error.URLError as e:
-        print(url)
-        print(url)
-        if "connection timed out"  in str(e).lower(): # TODO there is better way than this, right?
-            return json_response_from_url(url)
-        else:
+    for retry in range(20):
+        if debug:
+            print("making query", url)
+        url = url.replace(" ", "%20")
+        user_agent = 'taginfo_python_package'
+        try:
+            data = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': user_agent})).read()
+            return json.loads(data)
+        except UnicodeEncodeError:
+            print("failed to process", url)
             raise
+        except urllib.error.URLError as e:
+            print("failed on", url)
+            if "connection timed out" in str(e).lower(): # TODO there is better way than this, right?
+                return json_response_from_url(url)
+            else:
+                if retry < 10:
+                    print("will try to retry")
+                    time.sleep(19)
+                    continue
+                raise
