@@ -136,6 +136,19 @@ def count_new_appearances_of_key_historic_data(key, days_ago):
     data = get_all_raw_data_about_key_use(key)
     return count_new_appearances_of_tag_historic_data_from_deltas(data, days_ago)
 
+def get_page_of_short_key_info(page):
+    return json_response_from_url("https://taginfo.openstreetmap.org/api/4/keys/all?include=prevalent_values&sortname=length&sortorder=asc&rp=" + str(entries_per_page()) + "&page=" + str(page))["data"]
+
+def get_short_key_info():
+    page = 1
+    while True:
+        data = get_page_of_short_key_info(page)
+        for entry in data:
+            yield entry
+        page += 1
+        if len(data) < entries_per_page():
+            break
+
 def json_response_from_url(url, debug=False):
     for retry in range(20):
         if debug:
