@@ -35,6 +35,20 @@ def tagging_used_by_project(project):
         if len(data) < entries_per_page():
             break
 
+def projects_using_tag(key, value):
+    # https://taginfo.openstreetmap.org/tags/shop=house#projects
+    # https://taginfo.openstreetmap.org/api/4/tag/projects?key=shop&value=house&filter=all&sortname=tag&sortorder=asc&rp=23&page=1
+    # https://taginfo.openstreetmap.org/api/4/tag/projects?key=highway&value=motorway&filter=all&sortname=tag&sortorder=asc&rp=500&page=1
+    page = 1
+    while True:
+        link = "https://taginfo.openstreetmap.org/api/4/tag/projects?key=" + urllib.parse.quote(key) + "&value=" + urllib.parse.quote(value) + "&filter=all&sortname=tag&sortorder=asc&rp=" + str(entries_per_page()) + "&page=" + str(page)
+        data = json_response_from_url(link)["data"]
+        for entry in data:
+            yield entry
+        page += 1
+        if len(data) < entries_per_page():
+            break
+
 def wiki_pages_of_key(key):
     # https://taginfo.openstreetmap.org/taginfo/apidoc#api_4_key_wiki_pages
     # https://taginfo.openstreetmap.org/api/4/key/wiki_pages?key=highway
