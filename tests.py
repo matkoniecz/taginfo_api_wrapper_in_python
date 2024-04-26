@@ -60,7 +60,7 @@ class Tests(unittest.TestCase):
             "abandoned:tower" # it clearly should be abandoned:power=tower
         ], 4_000)
         show_popular_tags_not_supported_by_project(project, "place", [], 10_000)
-        show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed"], 5_000)
+        show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed", "facility"], 5_000)
         show_popular_tags_not_supported_by_project(project, "barrier", [], 3_000)
         show_popular_tags_not_supported_by_project(project, "highway", ["proposed", "no"], 1_000)
         show_popular_tags_not_supported_by_project(project, "tourism", ["yes"], 1_000)
@@ -69,6 +69,7 @@ class Tests(unittest.TestCase):
             "advertising", # nowadays advertising is added without that
             "beam", # undocumented, unclear, stagnated tag use
             "waterway",
+            "lamp", # unclear, see https://wiki.openstreetmap.org/wiki/Talk:Tag:man_made%3Dlamp
         ], 8_000)
         show_popular_tags_not_supported_by_project(project, "advertising", [], 3_000)
         show_popular_tags_not_supported_by_project(project, "aerialway", [], 1_000)
