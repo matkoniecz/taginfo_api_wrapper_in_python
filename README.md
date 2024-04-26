@@ -51,7 +51,7 @@ See `test_tags_used_in_project` in [tests.py](tests.py)
 
 ```
 # no issue created for it at https://github.com/openstreetmap/id-tagging-schema/issues
-# right now it provides no useful info (more ntries need to be skipped or verified)
+# right now it provides no useful info (more entries need to be skipped or verified)
 project = "id_editor"
 supported = []
 threshold = 500_000
