@@ -43,7 +43,12 @@ class Tests(unittest.TestCase):
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
         show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement", "granite", "paving_stones:30"], 10_000)
         show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
-        show_popular_tags_not_supported_by_project(project, "shop", ["yes", "no"], 1_000)
+        show_popular_tags_not_supported_by_project(project, "shop", [
+            "no", # boolean use (on amenity=fuel)
+            "yes", # boolean use or underspecific
+            "grocery", # is widely used differently in USA - maybe shop=dry_food would be better, 
+            # see https://osmus.slack.com/archives/C2VJAJCS0/p1696013685235599?thread_ts=1695995180.697409&cid=C2VJAJCS0
+            ], 1_000)
         show_popular_tags_not_supported_by_project(project, "craft", ["yes",
             "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
         ], 1_000)
@@ -80,7 +85,7 @@ class Tests(unittest.TestCase):
         show_popular_tags_not_supported_by_project(project, "cycleway:left", [], 5_000)
         show_popular_tags_not_supported_by_project(project, "cycleway:right", [], 5_000)
         show_popular_tags_not_supported_by_project(project, "cycleway:both", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "historic", [], 10_000)
+        show_popular_tags_not_supported_by_project(project, "historic", ["heritage"], 10_000)
         show_popular_tags_not_supported_by_project(project, "military", ["yes"], 2_500)
         show_popular_tags_not_supported_by_project(project, "office", [
             "logistics" # debris left by User:RTFM
