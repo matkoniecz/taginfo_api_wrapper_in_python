@@ -24,6 +24,18 @@ key = "name:ab"
 print(key, "is used", taginfo.query.count_appearances_of_key(key), "times")
 ```
 
+## What about tags?
+
+```
+import taginfo
+
+key = "horse"
+value = "noo"
+print(key, "=", value, "is used", taginfo.query.count_appearances_of_tag(key, value), "times")
+value = "no"
+print(key, "=", value, "is used", taginfo.query.count_appearances_of_tag(key, value), "times")
+```
+
 ## Listing popular values for key
 
 ```
