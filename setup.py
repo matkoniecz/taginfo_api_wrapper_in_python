@@ -14,9 +14,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    license="MIT",
     install_requires=["osm_bot_abstraction_layer"], # strictly speaking only running tests requires it...
     # for dependencies see https://python-packaging.readthedocs.io/en/latest/dependencies.html
 ) 
