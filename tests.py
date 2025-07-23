@@ -1,6 +1,7 @@
 import unittest
 import taginfo
 import osm_bot_abstraction_layer.tag_knowledge as tag_knowledge
+from collections import defaultdict
 
 class Tests(unittest.TestCase):
     def test_run_readme_code_key_usage_count(self):
@@ -20,10 +21,15 @@ class Tests(unittest.TestCase):
                 print(key, "=", entry['value'], str(int(entry['count']/1000)) + "k")
 
     def test_tags_used_in_project(self):
-        def show_popular_tags_not_supported_by_project(project, key, excluded_values, threshold):
+        def show_popular_tags_not_supported_by_project(project, key, excluded_values, threshold, callback_for_taginfo_data=None):
             expected_support = []
             cached_value_info = {}
+            collected_taginfo_entries = []
             for entry in taginfo.query.values_of_key_with_data(key):
+                collected_taginfo_entries.append(entry)
+            if callback_for_taginfo_data != None:
+                collected_taginfo_entries = callback_for_taginfo_data(collected_taginfo_entries)
+            for entry in collected_taginfo_entries:
                 if(entry['count'] > threshold):
                     expected_support.append(entry["value"])
                     cached_value_info[entry["value"]] = entry
@@ -39,6 +45,16 @@ class Tests(unittest.TestCase):
                     text = "`" + key + " = " + cached_value_info[entry]['value'] + "` " + str(int(cached_value_info[entry]['count']/1000)) + "k"
                     linked_markdown_text = "* [ ] [" + text + "](" + link + ")"
                     print(linked_markdown_text)
+
+        def split_semicolons(collected_taginfo_entries):
+            collected_info_per_split_value = defaultdict(int)
+            for entry in collected_taginfo_entries:
+                for value in entry["value"].split(";"):
+                    collected_info_per_split_value[value] += entry["count"]
+            returned = []
+            for value, count in collected_info_per_split_value.items():
+                returned.append({"value": value, "count": count})
+            return returned
 
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
         checked = [
@@ -102,7 +118,7 @@ class Tests(unittest.TestCase):
                 "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
             ], "threshold":2_500},
             {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
-            {"key": "cuisine", "ignored": [], "threshold":1_000},
+            {"key": "cuisine", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
@@ -112,7 +128,11 @@ class Tests(unittest.TestCase):
             {"key": "public_transport", "ignored": [], "threshold":20_000},
         ]
         for entry in checked:
-            show_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"])
+            callback_for_taginfo_data = None
+            if "callback_for_taginfo_data" in entry:
+                callback_for_taginfo_data = entry["callback_for_taginfo_data"]
+            show_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"], callback_for_taginfo_data)
+
 
         for key in tag_knowledge.typical_unprefixed_main_keys():
             found = False
