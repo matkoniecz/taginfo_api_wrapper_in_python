@@ -42,6 +42,9 @@ class Tests(unittest.TestCase):
 
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
         checked = [
+            {"key": "traffic_calming", "ignored": [], "threshold":1_000},
+            {"key": "attraction", "ignored": [], "threshold":1_000},
+            {"key": "cemetery", "ignored": [], "threshold":2_000},
             {"key": "building", "ignored": ["yes"], "threshold":100_000},
             {"key": "shop", "ignored": [
                 "no", # boolean use (on amenity=fuel)
@@ -98,6 +101,9 @@ class Tests(unittest.TestCase):
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
             ], "threshold":4_000},
+            {"key": "telecom", "ignored": [], "threshold":1_000},
+            {"key": "landcover", "ignored": [], "threshold":20_000},
+            {"key": "public_transport", "ignored": [], "threshold":20_000},
         ]
         for entry in checked:
             show_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"])
