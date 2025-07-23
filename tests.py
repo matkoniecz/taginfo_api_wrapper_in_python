@@ -42,7 +42,6 @@ class Tests(unittest.TestCase):
 
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
         checked = [
-            {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
             {"key": "building", "ignored": ["yes"], "threshold":100_000},
             {"key": "shop", "ignored": [
                 "no", # boolean use (on amenity=fuel)
@@ -62,9 +61,6 @@ class Tests(unittest.TestCase):
             {"key": "landuse", "ignored": [
                 "logging", # simply bad tagging schema
             ], "threshold":30_000},
-            {"key": "power", "ignored": [
-                "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
-            ], "threshold":4_000},
             {"key": "place", "ignored": [], "threshold":10_000},
             {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
             {"key": "barrier", "ignored": [], "threshold":3_000},
@@ -98,6 +94,10 @@ class Tests(unittest.TestCase):
             ], "threshold":2_500},
             {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
             {"key": "cuisine", "ignored": [], "threshold":1_000},
+            {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
+            {"key": "power", "ignored": [
+                "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
+            ], "threshold":4_000},
         ]
         for entry in checked:
             show_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"])
