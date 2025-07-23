@@ -41,7 +41,7 @@ class Tests(unittest.TestCase):
 
         project = "id_editor"
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
-        show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement", "granite", "paving_stones:30"], 10_000)
+        show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement"], 10_000)
         show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
         show_popular_tags_not_supported_by_project(project, "shop", [
             "no", # boolean use (on amenity=fuel)
