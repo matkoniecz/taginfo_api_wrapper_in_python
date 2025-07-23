@@ -62,7 +62,7 @@ class Tests(unittest.TestCase):
             "logging", # simply bad tagging schema
         ], 30_000)
         show_popular_tags_not_supported_by_project(project, "power", [
-            "abandoned:tower" # it clearly should be abandoned:power=tower
+            "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
         ], 4_000)
         show_popular_tags_not_supported_by_project(project, "place", [], 10_000)
         show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed", "facility"], 5_000)
