@@ -91,7 +91,7 @@ class Tests(unittest.TestCase):
             {"key": "cycleway:left", "ignored": [], "threshold":5_000},
             {"key": "cycleway:right", "ignored": [], "threshold":5_000},
             {"key": "cycleway:both", "ignored": [], "threshold":5_000},
-            {"key": "historic", "ignored": ["heritage"], "threshold":10_000},
+            {"key": "historic", "ignored": ["heritage", "yes"], "threshold":10_000},
             {"key": "military", "ignored": ["yes"], "threshold":2_500},
             {"key": "office", "ignored": [
                 "logistics" # debris left by User:RTFM
