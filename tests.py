@@ -1,5 +1,6 @@
 import unittest
 import taginfo
+import osm_bot_abstraction_layer.tag_knowledge as tag_knowledge
 
 class Tests(unittest.TestCase):
     def test_run_readme_code_key_usage_count(self):
@@ -39,64 +40,76 @@ class Tests(unittest.TestCase):
                     linked_markdown_text = "* [ ] [" + text + "](" + link + ")"
                     print(linked_markdown_text)
 
-        project = "id_editor"
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
-        show_popular_tags_not_supported_by_project(project, "surface", ["cobblestone", "cement"], 10_000)
-        show_popular_tags_not_supported_by_project(project, "building", ["yes"], 100_000)
-        show_popular_tags_not_supported_by_project(project, "shop", [
-            "no", # boolean use (on amenity=fuel)
-            "yes", # boolean use or underspecific
-            "grocery", # is widely used differently in USA - maybe shop=dry_food would be better, 
-            # see https://osmus.slack.com/archives/C2VJAJCS0/p1696013685235599?thread_ts=1695995180.697409&cid=C2VJAJCS0
-            ], 1_000)
-        show_popular_tags_not_supported_by_project(project, "craft", ["yes",
-            "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
-        ], 1_000)
-        show_popular_tags_not_supported_by_project(project, "natural", [
-            "land", # note that very large part is remain of broken CanVec importing, see say https://www.openstreetmap.org/node/3524361691 - maybe at least nodes can be mass deleted, obviously after consulting Canadian community - though some of them indicate not yet mapped islets). Though I think that this value can be anyway excluded from listing here. Though maybe it can be a validator warning?
-            "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
-            ], 10_000)
-        show_popular_tags_not_supported_by_project(project, "leisure", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "amenity", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "landuse", [
-            "logging", # simply bad tagging schema
-        ], 30_000)
-        show_popular_tags_not_supported_by_project(project, "power", [
-            "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
-        ], 4_000)
-        show_popular_tags_not_supported_by_project(project, "place", [], 10_000)
-        show_popular_tags_not_supported_by_project(project, "railway", ["razed", "proposed", "facility"], 5_000)
-        show_popular_tags_not_supported_by_project(project, "barrier", [], 3_000)
-        show_popular_tags_not_supported_by_project(project, "highway", ["proposed", "no"], 1_000)
-        show_popular_tags_not_supported_by_project(project, "tourism", ["yes"], 1_000)
-        show_popular_tags_not_supported_by_project(project, "waterway", ["artificial"], 5_000)
-        show_popular_tags_not_supported_by_project(project, "man_made", [
-            "advertising", # nowadays advertising is added without that
-            "beam", # undocumented, unclear, stagnated tag use
-            "waterway",
-            "lamp", # unclear, see https://wiki.openstreetmap.org/wiki/Talk:Tag:man_made%3Dlamp
-        ], 8_000)
-        show_popular_tags_not_supported_by_project(project, "advertising", [], 3_000)
-        show_popular_tags_not_supported_by_project(project, "aerialway", [], 1_000)
-        show_popular_tags_not_supported_by_project(project, "aeroway", [], 1_000)
-        show_popular_tags_not_supported_by_project(project, "boundary", ["landuse"], 30_000)
-        show_popular_tags_not_supported_by_project(project, "emergency", [], 1_000)
-        show_popular_tags_not_supported_by_project(project, "cycleway", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "cycleway:left", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "cycleway:right", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "cycleway:both", [], 5_000)
-        show_popular_tags_not_supported_by_project(project, "historic", ["heritage"], 10_000)
-        show_popular_tags_not_supported_by_project(project, "military", ["yes"], 2_500)
-        show_popular_tags_not_supported_by_project(project, "office", [
-            "logistics" # debris left by User:RTFM
-        ], 2_000)
-        show_popular_tags_not_supported_by_project(project, "route", [], 2_000)
-        show_popular_tags_not_supported_by_project(project, "sport", [
-            "cricket_nets", # not an actual sport
-            "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
-        ], 2_500)
-        show_popular_tags_not_supported_by_project(project, "healthcare", ["hospital", "pharmacy", "doctor", "clinic", "dentist"], 1_000)
-        show_popular_tags_not_supported_by_project(project, "cuisine", [], 1_000)
+        checked = [
+            {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
+            {"key": "building", "ignored": ["yes"], "threshold":100_000},
+            {"key": "shop", "ignored": [
+                "no", # boolean use (on amenity=fuel)
+                "yes", # boolean use or underspecific
+                "grocery", # is widely used differently in USA - maybe shop=dry_food would be better, 
+                # see https://osmus.slack.com/archives/C2VJAJCS0/p1696013685235599?thread_ts=1695995180.697409&cid=C2VJAJCS0
+            ], "threshold":1_000},
+            {"key": "craft", "ignored": ["yes",
+                "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
+            ], "threshold":1_000},
+            {"key": "natural", "ignored": [
+                "land", # note that very large part is remain of broken CanVec importing, see say https://www.openstreetmap.org/node/3524361691 - maybe at least nodes can be mass deleted, obviously after consulting Canadian community - though some of them indicate not yet mapped islets). Though I think that this value can be anyway excluded from listing here. Though maybe it can be a validator warning?
+                "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
+            ], "threshold":10_000},
+            {"key": "leisure", "ignored": [], "threshold":5_000},
+            {"key": "amenity", "ignored": [], "threshold":5_000},
+            {"key": "landuse", "ignored": [
+                "logging", # simply bad tagging schema
+            ], "threshold":30_000},
+            {"key": "power", "ignored": [
+                "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
+            ], "threshold":4_000},
+            {"key": "place", "ignored": [], "threshold":10_000},
+            {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
+            {"key": "barrier", "ignored": [], "threshold":3_000},
+            {"key": "highway", "ignored": ["proposed", "no", "razed" "disused"], "threshold":1_000},
+            {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
+            {"key": "waterway", "ignored": ["artificial"], "threshold":5_000},
+            {"key": "man_made", "ignored": [
+                "advertising", # nowadays advertising is added without that
+                "beam", # undocumented, unclear, stagnated tag use
+                "waterway",
+                "lamp", # unclear, see https://wiki.openstreetmap.org/wiki/Talk:Tag:man_made%3Dlamp
+            ], "threshold":8_000},
+            {"key": "advertising", "ignored": [], "threshold":3_000},
+            {"key": "aerialway", "ignored": [], "threshold":1_000},
+            {"key": "aeroway", "ignored": [], "threshold":1_000},
+            {"key": "boundary", "ignored": ["landuse"], "threshold":30_000},
+            {"key": "emergency", "ignored": [], "threshold":1_000},
+            {"key": "cycleway", "ignored": [], "threshold":5_000},
+            {"key": "cycleway:left", "ignored": [], "threshold":5_000},
+            {"key": "cycleway:right", "ignored": [], "threshold":5_000},
+            {"key": "cycleway:both", "ignored": [], "threshold":5_000},
+            {"key": "historic", "ignored": ["heritage"], "threshold":10_000},
+            {"key": "military", "ignored": ["yes"], "threshold":2_500},
+            {"key": "office", "ignored": [
+                "logistics" # debris left by User:RTFM
+            ], "threshold":2_000},
+            {"key": "route", "ignored": [], "threshold":2_000},
+            {"key": "sport", "ignored": [
+                "cricket_nets", # not an actual sport
+                "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
+            ], "threshold":2_500},
+            {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
+            {"key": "cuisine", "ignored": [], "threshold":1_000},
+        ]
+        for entry in checked:
+            show_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"])
+
+        for key in tag_knowledge.typical_unprefixed_main_keys():
+            found = False
+            for entry in checked:
+                if key == entry["key"]:
+                    found = True
+                    break
+            if found == False:
+                print(key, "main key is not checked, probably should be included")
 
     def test_run_readme_code_popular_keys_not_used_in_project(self):
         # no issue created for it at https://github.com/openstreetmap/id-tagging-schema/issues
