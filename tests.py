@@ -98,7 +98,7 @@ class Tests(unittest.TestCase):
             {"key": "aeroway", "ignored": [], "threshold":1_000},
             {"key": "boundary", "ignored": ["landuse"], "threshold":30_000},
             {"key": "emergency", "ignored": [
-                "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/529#issuecomment-1455893942
+                "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3109133860 (only last tag in list is shown by taginfo, maybe it should be changed)
             ], "threshold":1_000},
             {"key": "cycleway", "ignored": [
                 "yes",
