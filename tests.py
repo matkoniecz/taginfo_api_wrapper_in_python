@@ -81,8 +81,13 @@ class Tests(unittest.TestCase):
             {"key": "aerialway", "ignored": [], "threshold":1_000},
             {"key": "aeroway", "ignored": [], "threshold":1_000},
             {"key": "boundary", "ignored": ["landuse"], "threshold":30_000},
-            {"key": "emergency", "ignored": [], "threshold":1_000},
-            {"key": "cycleway", "ignored": [], "threshold":5_000},
+            {"key": "emergency", "ignored": [
+                "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/529#issuecomment-1455893942
+            ], "threshold":1_000},
+            {"key": "cycleway", "ignored": [
+                "yes",
+                "sidewalk", # see https://wiki.openstreetmap.org/wiki/Tag:cycleway=sidewalk
+                ], "threshold":5_000},
             {"key": "cycleway:left", "ignored": [], "threshold":5_000},
             {"key": "cycleway:right", "ignored": [], "threshold":5_000},
             {"key": "cycleway:both", "ignored": [], "threshold":5_000},
@@ -103,7 +108,7 @@ class Tests(unittest.TestCase):
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
             ], "threshold":4_000},
             {"key": "telecom", "ignored": [], "threshold":1_000},
-            {"key": "landcover", "ignored": [], "threshold":20_000},
+            {"key": "landcover", "ignored": ["trees", "grass"], "threshold":20_000},
             {"key": "public_transport", "ignored": [], "threshold":20_000},
         ]
         for entry in checked:
