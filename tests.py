@@ -60,14 +60,15 @@ class Tests(unittest.TestCase):
                 "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
             ], "threshold":10_000},
             {"key": "leisure", "ignored": [], "threshold":5_000},
-            {"key": "amenity", "ignored": [], "threshold":5_000},
+            {"key": "amenity", "ignored": ["house"], "threshold":5_000},
             {"key": "landuse", "ignored": [
+                "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
             ], "threshold":30_000},
             {"key": "place", "ignored": [], "threshold":10_000},
             {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
             {"key": "barrier", "ignored": [], "threshold":3_000},
-            {"key": "highway", "ignored": ["proposed", "no", "razed" "disused"], "threshold":1_000},
+            {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
             {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
             {"key": "waterway", "ignored": ["artificial"], "threshold":5_000},
             {"key": "man_made", "ignored": [
