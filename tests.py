@@ -58,7 +58,9 @@ class Tests(unittest.TestCase):
 
         # keys based on https://wiki.openstreetmap.org/wiki/Map_features
         checked = [
-            {"key": "traffic_calming", "ignored": [], "threshold":1_000},
+            {"key": "traffic_calming", "ignored": [
+                "median", # https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
+            ], "threshold":1_000},
             {"key": "attraction", "ignored": [], "threshold":1_000},
             {"key": "cemetery", "ignored": [], "threshold":2_000},
             {"key": "building", "ignored": ["yes"], "threshold":100_000},
@@ -124,7 +126,10 @@ class Tests(unittest.TestCase):
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
             ], "threshold":4_000},
             {"key": "telecom", "ignored": [], "threshold":1_000},
-            {"key": "landcover", "ignored": ["trees", "grass"], "threshold":20_000},
+            {"key": "landcover", "ignored": [
+                "trees", "grass"
+                "mostly_rock", # mostly bad idea, looks like an import https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
+                ], "threshold":20_000},
             {"key": "public_transport", "ignored": [], "threshold":20_000},
         ]
         for entry in checked:
