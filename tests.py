@@ -88,7 +88,9 @@ class Tests(unittest.TestCase):
                 "municipality", # appears to be result of imports, not organic mapping
             ], "threshold":10_000},
             {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
-            {"key": "barrier", "ignored": [], "threshold":3_000},
+            {"key": "barrier", "ignored": [
+                "line", # old tagging for renderer from days when OSM Carto was showing all barrier= values
+            ], "threshold":3_000},
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
             {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
             {"key": "waterway", "ignored": ["artificial"], "threshold":5_000},
