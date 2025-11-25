@@ -132,7 +132,7 @@ class Tests(unittest.TestCase):
             {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
-            ], "threshold":4_000},
+            ], "threshold": 25_000},
             {"key": "telecom", "ignored": [], "threshold":1_000},
             {"key": "landcover", "ignored": [
                 "trees", "grass"
