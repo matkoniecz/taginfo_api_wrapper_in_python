@@ -60,6 +60,7 @@ class Tests(unittest.TestCase):
         checked = [
             {"key": "traffic_calming", "ignored": [
                 "median", # https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
+                "no", # it seems to be that support in any way is not really needed or useful
             ], "threshold":1_000},
             {"key": "attraction", "ignored": [], "threshold":1_000},
             {"key": "cemetery", "ignored": [], "threshold":2_000},
@@ -83,7 +84,9 @@ class Tests(unittest.TestCase):
                 "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
             ], "threshold":30_000},
-            {"key": "place", "ignored": [], "threshold":10_000},
+            {"key": "place", "ignored": [
+                "municipality", # appears to be result of imports, not organic mapping
+            ], "threshold":10_000},
             {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
             {"key": "barrier", "ignored": [], "threshold":3_000},
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
@@ -101,6 +104,7 @@ class Tests(unittest.TestCase):
             {"key": "boundary", "ignored": ["landuse"], "threshold":30_000},
             {"key": "emergency", "ignored": [
                 "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3109133860 (only last tag in list is shown by taginfo, maybe it should be changed)
+                "psap", # clearly mass imported, no real mapping use - see https://taginfo.openstreetmap.org/tags/emergency=psap See also https://www.openstreetmap.org/changeset/151269441 - it seems to be an undiscussed import (TODO: it seems that it should be purged)
             ], "threshold":1_000},
             {"key": "cycleway", "ignored": [
                 "yes",
@@ -120,7 +124,9 @@ class Tests(unittest.TestCase):
                 "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
             ], "threshold":2_500},
             {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
-            {"key": "cuisine", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
+            {"key": "cuisine", "ignored": [
+                "fast_food", # listed on wiki as mistagging, big chunk of it is on amenity=fast_food where it is a pointless duplicate at best
+            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
