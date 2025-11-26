@@ -76,7 +76,8 @@ class Tests(unittest.TestCase):
             ], "threshold":1_000},
             {"key": "natural", "ignored": [
                 "land", # note that very large part is remain of broken CanVec importing, see say https://www.openstreetmap.org/node/3524361691 - maybe at least nodes can be mass deleted, obviously after consulting Canadian community - though some of them indicate not yet mapped islets). Though I think that this value can be anyway excluded from listing here. Though maybe it can be a validator warning?
-                "crevasse" # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
+                "crevasse", # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
+                "landform", # bad canvec mapping from bad imports
             ], "threshold":10_000},
             {"key": "leisure", "ignored": [], "threshold":5_000},
             {"key": "amenity", "ignored": ["house"], "threshold":5_000},
@@ -99,6 +100,7 @@ class Tests(unittest.TestCase):
                 "beam", # undocumented, unclear, stagnated tag use
                 "waterway",
                 "lamp", # unclear, see https://wiki.openstreetmap.org/wiki/Talk:Tag:man_made%3Dlamp
+                "pond", # imported duplicate
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [], "threshold":1_000},
