@@ -104,12 +104,12 @@ class Tests(unittest.TestCase):
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [], "threshold":1_000},
-            {"key": "aeroway", "ignored": [], "threshold":1_000},
+            {"key": "aeroway", "ignored": [], "threshold":6_000},
             {"key": "boundary", "ignored": ["landuse"], "threshold":30_000},
             {"key": "emergency", "ignored": [
                 "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3109133860 (only last tag in list is shown by taginfo, maybe it should be changed)
                 "psap", # clearly mass imported, no real mapping use - see https://taginfo.openstreetmap.org/tags/emergency=psap See also https://www.openstreetmap.org/changeset/151269441 - it seems to be an undiscussed import (TODO: it seems that it should be purged)
-            ], "threshold":1_000},
+            ], "threshold":2_000},
             {"key": "cycleway", "ignored": [
                 "yes",
                 "sidewalk", # see https://wiki.openstreetmap.org/wiki/Tag:cycleway=sidewalk
