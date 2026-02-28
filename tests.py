@@ -113,10 +113,12 @@ class Tests(unittest.TestCase):
             {"key": "emergency", "ignored": [
                 "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3109133860 (only last tag in list is shown by taginfo, maybe it should be changed)
                 "psap", # clearly mass imported, no real mapping use - see https://taginfo.openstreetmap.org/tags/emergency=psap See also https://www.openstreetmap.org/changeset/151269441 - it seems to be an undiscussed import (TODO: it seems that it should be purged)
+                "drinking_water", # mostly imported
             ], "threshold":2_000},
             {"key": "cycleway", "ignored": [
                 "yes",
                 "sidewalk", # see https://wiki.openstreetmap.org/wiki/Tag:cycleway=sidewalk
+                "shared", # Formerly used, see https://wiki.openstreetmap.org/wiki/Key%3Acycleway
                 ], "threshold":5_000},
             {"key": "cycleway:left", "ignored": [], "threshold":5_000},
             {"key": "cycleway:right", "ignored": [], "threshold":5_000},
@@ -126,7 +128,9 @@ class Tests(unittest.TestCase):
             {"key": "office", "ignored": [
                 "logistics" # debris left by User:RTFM
             ], "threshold":2_000},
-            {"key": "route", "ignored": [], "threshold":2_000},
+            {"key": "route", "ignored": [
+                "ski", # "can be considered a duplicate of route=piste, which is already supported, actually community-approved, and has gained more traction since." https://wiki.openstreetmap.org/wiki/Proposal:Tag:route%3Dpiste https://taghistory.raifer.tech/?#***/route/ski&***/route/piste https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3605414920
+            ], "threshold":2_000},
             {"key": "sport", "ignored": [
                 "cricket_nets", # not an actual sport
                 "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
