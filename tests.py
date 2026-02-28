@@ -79,8 +79,12 @@ class Tests(unittest.TestCase):
                 "crevasse", # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
                 "landform", # bad canvec mapping from bad imports
             ], "threshold":10_000},
-            {"key": "leisure", "ignored": [], "threshold":5_000},
-            {"key": "amenity", "ignored": ["house"], "threshold":5_000},
+            {"key": "leisure", "ignored": [], "threshold":3_000},
+            {"key": "amenity", "ignored": [
+                "house",
+                "waste_dump_site", # no oganic use, see https://taginfo.openstreetmap.org/tags/amenity=waste_dump_site
+                "fixme", # not real object type, see https://github.com/Zverik/every_door/issues/880
+                ], "threshold":3_000},
             {"key": "landuse", "ignored": [
                 "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
