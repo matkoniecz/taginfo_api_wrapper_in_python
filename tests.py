@@ -64,7 +64,7 @@ class Tests(unittest.TestCase):
             ], "threshold":1_000},
             {"key": "attraction", "ignored": [], "threshold":1_000},
             {"key": "cemetery", "ignored": [], "threshold":2_000},
-            {"key": "building", "ignored": ["yes"], "threshold":100_000},
+            {"key": "building", "ignored": ["yes"], "threshold":10_000},
             {"key": "shop", "ignored": [
                 "no", # boolean use (on amenity=fuel)
                 "yes", # boolean use or underspecific
