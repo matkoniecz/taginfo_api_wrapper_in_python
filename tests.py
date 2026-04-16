@@ -83,7 +83,7 @@ class Tests(unittest.TestCase):
             {"key": "leisure", "ignored": [], "threshold":3_000},
             {"key": "amenity", "ignored": [
                 "house",
-                "waste_dump_site", # no oganic use, see https://taginfo.openstreetmap.org/tags/amenity=waste_dump_site
+                "waste_dump_site", # no organic use, see https://taginfo.openstreetmap.org/tags/amenity=waste_dump_site
                 "fixme", # not real object type, see https://github.com/Zverik/every_door/issues/880
                 ], "threshold":3_000},
             {"key": "landuse", "ignored": [
@@ -96,6 +96,7 @@ class Tests(unittest.TestCase):
             {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
             {"key": "barrier", "ignored": [
                 "line", # old tagging for renderer from days when OSM Carto was showing all barrier= values
+                "sliding_gate", # https://github.com/openstreetmap/id-tagging-schema/issues/1171
             ], "threshold":3_000},
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
             {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
@@ -109,7 +110,10 @@ class Tests(unittest.TestCase):
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [], "threshold":1_000},
-            {"key": "aeroway", "ignored": [], "threshold":6_000},
+            {"key": "aeroway", "ignored": [
+                "navigationaid", # https://github.com/openstreetmap/id-tagging-schema/issues/2188
+                "tower", # looks like tagging is still not settled
+            ], "threshold":6_000},
             {"key": "boundary", "ignored": ["landuse"], "threshold":30_000},
             {"key": "emergency", "ignored": [
                 "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3109133860 (only last tag in list is shown by taginfo, maybe it should be changed)
@@ -138,18 +142,28 @@ class Tests(unittest.TestCase):
             ], "threshold":2_500},
             {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
             {"key": "cuisine", "ignored": [
+                "bakery", # mentioned at https://wiki.openstreetmap.org/wiki/Key:cuisine only as unwanted
                 "fast_food", # listed on wiki as mistagging, big chunk of it is on amenity=fast_food where it is a pointless duplicate at best
-            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
-            {"key": "surface", "ignored": ["cobblestone", "cement"], "threshold":10_000},
+                "cafe", # suspect, listed as bad at https://wiki.openstreetmap.org/wiki/Key:cuisine
+                "noodles", # listed as duplicate of =noodle
+            ], "threshold":500, "callback_for_taginfo_data": split_semicolons},
+            {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":10_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
             ], "threshold": 25_000},
-            {"key": "telecom", "ignored": [], "threshold":1_000},
+            {"key": "telecom", "ignored": [
+                "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
+            ], "threshold":5_000},
             {"key": "landcover", "ignored": [
-                "trees", "grass"
+                "trees", "grass",
                 "mostly_rock", # mostly bad idea, looks like an import https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
                 ], "threshold":20_000},
             {"key": "public_transport", "ignored": [], "threshold":20_000},
+            {"key": "religion", "ignored": [], "threshold":10_000},
+            {"key": "denomination", "ignored": [], "threshold":10_000},
+            {"key": "shelter_type", "ignored": [], "threshold":10_000},
+            {"key": "service", "ignored": [], "threshold":10_000},
+            {"key": "social_facility", "ignored": [], "threshold":10_000},
         ]
         for entry in checked:
             callback_for_taginfo_data = None
