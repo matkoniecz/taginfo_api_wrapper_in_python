@@ -64,13 +64,20 @@ class Tests(unittest.TestCase):
             ], "threshold":1_000},
             {"key": "attraction", "ignored": [], "threshold":1_000},
             {"key": "cemetery", "ignored": [], "threshold":2_000},
-            {"key": "building", "ignored": ["yes"], "threshold":10_000},
+            {"key": "building", "ignored": [
+                'silo', 'storage_tank', 'slurry_tank', # smells like mistagging for renderer
+                'stilt_house', # https://taginfo.openstreetmap.org/tags/building=stilt_house - sudden jumps, dubious organic growth
+                'tomb', # non-organic growth, see https://taginfo.openstreetmap.org/tags/building=tomb#overview - and no wiki page
+                'kitchen', # bad import - https://taginfo.openstreetmap.org/tags/building=kitchen#chronology and https://overpass-turbo.eu/s/2nV0 - many to be deleted with "delete bunch of now gone features"
+                'trullo', # non-organic use, see https://taginfo.openstreetmap.org/tags/building=trullo
+            ], "threshold":5_000},
             {"key": "building:part", "ignored": ["yes"], "threshold":10_000},
             {"key": "shop", "ignored": [
                 "no", # boolean use (on amenity=fuel)
                 "yes", # boolean use or underspecific
                 "grocery", # is widely used differently in USA - maybe shop=dry_food would be better, 
                 # see https://osmus.slack.com/archives/C2VJAJCS0/p1696013685235599?thread_ts=1695995180.697409&cid=C2VJAJCS0
+                "convenience;gas", # looks like added by import/specific editing project: see chronology chart at https://taginfo.openstreetmap.org/tags/shop=convenience;gas
             ], "threshold":1_000},
             {"key": "craft", "ignored": ["yes",
                 "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
@@ -79,13 +86,16 @@ class Tests(unittest.TestCase):
                 "land", # note that very large part is remain of broken CanVec importing, see say https://www.openstreetmap.org/node/3524361691 - maybe at least nodes can be mass deleted, obviously after consulting Canadian community - though some of them indicate not yet mapped islets). Though I think that this value can be anyway excluded from listing here. Though maybe it can be a validator warning?
                 "crevasse", # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
                 "landform", # bad canvec mapping from bad imports
+                "hill", # https://taginfo.openstreetmap.org/tags/natural=hill shows it mostly imported or coming from some specific mass editing
             ], "threshold":10_000},
             {"key": "leisure", "ignored": [], "threshold":3_000},
             {"key": "amenity", "ignored": [
                 "house",
                 "waste_dump_site", # no organic use, see https://taginfo.openstreetmap.org/tags/amenity=waste_dump_site
                 "fixme", # not real object type, see https://github.com/Zverik/every_door/issues/880
-                ], "threshold":3_000},
+                "mobile_money_agent", # import without any organic use
+                "feeding_place", # see https://github.com/openstreetmap/id-tagging-schema/issues/1166
+                ], "threshold":4_000},
             {"key": "landuse", "ignored": [
                 "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
@@ -93,20 +103,31 @@ class Tests(unittest.TestCase):
             {"key": "place", "ignored": [
                 "municipality", # appears to be result of imports, not organic mapping
             ], "threshold":10_000},
-            {"key": "railway", "ignored": ["razed", "proposed", "facility"], "threshold":5_000},
+            {"key": "railway", "ignored": [
+                "razed", "proposed", # not real
+                "facility",
+                "junction", # highly internal and expert stuff
+                ], "threshold":5_000},
             {"key": "barrier", "ignored": [
                 "line", # old tagging for renderer from days when OSM Carto was showing all barrier= values
                 "sliding_gate", # https://github.com/openstreetmap/id-tagging-schema/issues/1171
-            ], "threshold":3_000},
+                "field_boundary", # looks like import/narrowly used/failed experiment, not something with organic use: https://taginfo.openstreetmap.org/tags/barrier=field_boundary
+                "door", # https://taginfo.openstreetmap.org/tags/barrier=door#overview + no documentation
+            ], "threshold":4_000},
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
             {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
-            {"key": "waterway", "ignored": ["artificial"], "threshold":5_000},
+            {"key": "waterway", "ignored": [
+                "artificial",
+                "drystream", # https://wiki.openstreetmap.org/wiki/Tag:waterway=drystream claims it is a poor idea
+            ], "threshold":5_000},
             {"key": "man_made", "ignored": [
                 "advertising", # nowadays advertising is added without that
                 "beam", # undocumented, unclear, stagnated tag use
                 "waterway",
                 "lamp", # unclear, see https://wiki.openstreetmap.org/wiki/Talk:Tag:man_made%3Dlamp
                 "pond", # imported duplicate
+                "march_terrace", # https://taginfo.openstreetmap.org/tags/man_made=marsh_terrace#chronology
+                "kiln", # looks imported
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [], "threshold":1_000},
@@ -119,7 +140,9 @@ class Tests(unittest.TestCase):
                 "water_tank", # see https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3109133860 (only last tag in list is shown by taginfo, maybe it should be changed)
                 "psap", # clearly mass imported, no real mapping use - see https://taginfo.openstreetmap.org/tags/emergency=psap See also https://www.openstreetmap.org/changeset/151269441 - it seems to be an undiscussed import (TODO: it seems that it should be purged)
                 "drinking_water", # mostly imported
-            ], "threshold":2_000},
+                "disaster_help_point", # mostly imported
+                "access_point", # imported, see https://taginfo.openstreetmap.org/tags/emergency=access_point
+            ], "threshold":4_000},
             {"key": "cycleway", "ignored": [
                 "yes",
                 "sidewalk", # see https://wiki.openstreetmap.org/wiki/Tag:cycleway=sidewalk
@@ -135,21 +158,28 @@ class Tests(unittest.TestCase):
             ], "threshold":2_000},
             {"key": "route", "ignored": [
                 "ski", # "can be considered a duplicate of route=piste, which is already supported, actually community-approved, and has gained more traction since." https://wiki.openstreetmap.org/wiki/Proposal:Tag:route%3Dpiste https://taghistory.raifer.tech/?#***/route/ski&***/route/piste https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3605414920
-            ], "threshold":2_000},
+            ], "threshold":4_000},
             {"key": "sport", "ignored": [
                 "cricket_nets", # not an actual sport
                 "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
-            ], "threshold":2_500},
+                "rugby", # see https://wiki.openstreetmap.org/wiki/Tag:sport=rugby
+            ], "threshold":2_500, "callback_for_taginfo_data": split_semicolons},
             {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
             {"key": "cuisine", "ignored": [
                 "bakery", # mentioned at https://wiki.openstreetmap.org/wiki/Key:cuisine only as unwanted
                 "fast_food", # listed on wiki as mistagging, big chunk of it is on amenity=fast_food where it is a pointless duplicate at best
                 "cafe", # suspect, listed as bad at https://wiki.openstreetmap.org/wiki/Key:cuisine
                 "noodles", # listed as duplicate of =noodle
+                "coffee", # looks like an undocumented and unclear duplicate of `cuisine=coffee_shop` (which already is dubious on its own)
+                "international", # is it even meaning anything in practice? Sounds like duplicate of =fusion if it means anything. https://taginfo.openstreetmap.org/tags/cuisine=international shows decline, and as % of cuisine use it would be greater
+                "deli", # https://wiki.openstreetmap.org/wiki/Key%3Acuisine has "A place that sells meats, cheeses, and prepared foods" which is not really a cuisine at all"
+                "lunch", #  is it really making sense? even in world of broadly-define meaning of "cuisine". wiki has "A style of food typically served in the middle of the day"
             ], "threshold":500, "callback_for_taginfo_data": split_semicolons},
             {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":10_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
+                "connection", "inverter", "compensator", "circuit", # confusing expert internal stuff without clear wiki docs
+                "cable_distribution", # looks imported and without documentation
             ], "threshold": 25_000},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
