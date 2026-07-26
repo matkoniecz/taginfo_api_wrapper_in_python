@@ -87,6 +87,7 @@ class Tests(unittest.TestCase):
                 "crevasse", # inflated by imports, see https://taginfo.openstreetmap.org/tags/natural=crevasse#chronology
                 "landform", # bad canvec mapping from bad imports
                 "hill", # https://taginfo.openstreetmap.org/tags/natural=hill shows it mostly imported or coming from some specific mass editing
+                "earth_bank", # sorry, but it is rather tagged as natural=cliff no matter what OSM Wiki claims
             ], "threshold":10_000},
             {"key": "leisure", "ignored": [], "threshold":3_000},
             {"key": "amenity", "ignored": [
@@ -107,6 +108,7 @@ class Tests(unittest.TestCase):
                 "razed", "proposed", # not real
                 "facility",
                 "junction", # highly internal and expert stuff
+                "stop", # internal, ptv2-style duplicate
                 ], "threshold":5_000},
             {"key": "barrier", "ignored": [
                 "line", # old tagging for renderer from days when OSM Carto was showing all barrier= values
@@ -117,6 +119,7 @@ class Tests(unittest.TestCase):
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
             {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
             {"key": "waterway", "ignored": [
+                "stream_end", # https://community.openstreetmap.org/t/is-there-anything-wrong-with-waterway-stream-end-inclusion-into-id-presets-was-planned-cancelled-for-now/144894
                 "artificial",
                 "drystream", # https://wiki.openstreetmap.org/wiki/Tag:waterway=drystream claims it is a poor idea
             ], "threshold":5_000},
@@ -128,6 +131,7 @@ class Tests(unittest.TestCase):
                 "pond", # imported duplicate
                 "march_terrace", # https://taginfo.openstreetmap.org/tags/man_made=marsh_terrace#chronology
                 "kiln", # looks imported
+                "heap", # https://www.openstreetmap.org/changeset/144141731
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [], "threshold":1_000},
@@ -183,6 +187,7 @@ class Tests(unittest.TestCase):
             ], "threshold": 25_000},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
+                "line", # Is it for both overground and underground? If for underground what about verifiability
             ], "threshold":5_000},
             {"key": "landcover", "ignored": [
                 "trees", "grass",
