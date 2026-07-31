@@ -264,7 +264,7 @@ class Tests(unittest.TestCase):
                     continue
                 if key not in supported:
                     count = int(entry["count_all"])
-                    formatted_count = str(count/1000)+"k"
+                    formatted_count = str(int(count/1000))+"k"
                     if count < 1000:
                         formatted_count = str(count)
                     print(key, formatted_count)
