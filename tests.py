@@ -74,6 +74,10 @@ class Tests(unittest.TestCase):
                 'tomb', # non-organic growth, see https://taginfo.openstreetmap.org/tags/building=tomb#overview - and no wiki page
                 'kitchen', # bad import - https://taginfo.openstreetmap.org/tags/building=kitchen#chronology and https://overpass-turbo.eu/s/2nV0 - many to be deleted with "delete bunch of now gone features"
                 'trullo', # non-organic use, see https://taginfo.openstreetmap.org/tags/building=trullo
+                'granary', # https://taginfo.openstreetmap.org/tags/building=granary indicates high jump in usage, and gradual lowering, associated with imports/mass retaggings/organised edits and lacking indication of organic growth in regular use 
+                'collapsed', 'abandoned', "damaged", # invalid value
+                "pajaru", # appears in huge jump, little organic growth
+                "presbytery", # https://github.com/openstreetmap/id-tagging-schema/issues/394#issuecomment-4106353779
             ], "threshold":5_000},
             {"key": "building:part", "ignored": ["yes"], "threshold":10_000},
             {"key": "shop", "ignored": [
@@ -81,7 +85,7 @@ class Tests(unittest.TestCase):
                 "yes", # boolean use or underspecific
                 "grocery", # is widely used differently in USA - maybe shop=dry_food would be better, 
                 # see https://osmus.slack.com/archives/C2VJAJCS0/p1696013685235599?thread_ts=1695995180.697409&cid=C2VJAJCS0
-                "convenience;gas", # looks like added by import/specific editing project: see chronology chart at https://taginfo.openstreetmap.org/tags/shop=convenience;gas
+                "convenience;gas", # looks like added by import/specific editing project: see chronology chart at https://taginfo.openstreetmap.org/tags/shop=convenience;gas - see also https://forum.openstreetmap.fr/t/shop-convenience-gas-in-france/45010
             ], "threshold":1_000},
             {"key": "craft", "ignored": ["yes",
                 "grinding_mill", # import only https://taginfo.openstreetmap.org/tags/craft=grinding_mill#chronology
@@ -92,6 +96,7 @@ class Tests(unittest.TestCase):
                 "landform", # bad canvec mapping from bad imports
                 "hill", # https://taginfo.openstreetmap.org/tags/natural=hill shows it mostly imported or coming from some specific mass editing
                 "earth_bank", # sorry, but it is rather tagged as natural=cliff no matter what OSM Wiki claims
+                "tree_group", # meager use compared to other tree tagging
             ], "threshold":10_000},
             {"key": "leisure", "ignored": [], "threshold":3_000},
             {"key": "amenity", "ignored": [
@@ -119,6 +124,8 @@ class Tests(unittest.TestCase):
                 "sliding_gate", # https://github.com/openstreetmap/id-tagging-schema/issues/1171
                 "field_boundary", # looks like import/narrowly used/failed experiment, not something with organic use: https://taginfo.openstreetmap.org/tags/barrier=field_boundary
                 "door", # https://taginfo.openstreetmap.org/tags/barrier=door#overview + no documentation
+            ], "threshold":4_000},
+            {"key": "obstacle", "ignored": [
             ], "threshold":4_000},
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
             {"key": "tourism", "ignored": ["yes"], "threshold":1_000},
@@ -171,6 +178,8 @@ class Tests(unittest.TestCase):
                 "cricket_nets", # not an actual sport
                 "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
                 "rugby", # see https://wiki.openstreetmap.org/wiki/Tag:sport=rugby
+                "hockey", # ambiguous, on downward trend, deprecated
+                "exercise", # no documentation, going down, seems inferior to alterbatives and being replaced 
             ], "threshold":2_500, "callback_for_taginfo_data": split_semicolons},
             {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
             {"key": "cuisine", "ignored": [
