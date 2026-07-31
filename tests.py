@@ -42,7 +42,11 @@ class Tests(unittest.TestCase):
             for entry in expected_support:
                 if entry not in excluded_values:
                     link = "https://taginfo.openstreetmap.org/tags/" + key + "=" + entry
-                    text = "`" + key + " = " + cached_value_info[entry]['value'] + "` " + str(int(cached_value_info[entry]['count']/1000)) + "k"
+                    value = cached_value_info[entry]['count']
+                    value_count = str(int(value/1000)) + "k"
+                    if value < 2000:
+                        value_count = str(value)
+                    text = "`" + key + " = " + cached_value_info[entry]['value'] + "` " + value_count
                     linked_markdown_text = "* [ ] [" + text + "](" + link + ")"
                     print(linked_markdown_text)
 
