@@ -65,8 +65,8 @@ class Tests(unittest.TestCase):
             {"key": "traffic_calming", "ignored": [
                 "median", # https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
                 "no", # it seems to be that support in any way is not really needed or useful
-            ], "threshold":1_000},
-            {"key": "attraction", "ignored": [], "threshold":1_000},
+            ], "threshold":2_800},
+            {"key": "attraction", "ignored": [], "threshold":2_000},
             {"key": "cemetery", "ignored": [], "threshold":2_000},
             {"key": "building", "ignored": [
                 'silo', 'storage_tank', 'slurry_tank', # smells like mistagging for renderer
@@ -78,6 +78,10 @@ class Tests(unittest.TestCase):
                 'collapsed', 'abandoned', "damaged", # invalid value
                 "pajaru", # appears in huge jump, little organic growth
                 "presbytery", # https://github.com/openstreetmap/id-tagging-schema/issues/394#issuecomment-4106353779
+                "agricultural", # probably building=farm_auxiliary duplicate, but not clear what it means
+                "mobile_home", # building=static_caravan duplicate
+                "dam", # clearly bad mapping and tagging for renderer, mostly added by one mapper who is now abandoning this, see https://www.openstreetmap.org/changeset/25707262
+                "duplex", # is a duplicate of building=semidetached_house as far as I can see...
             ], "threshold":5_000},
             {"key": "building:part", "ignored": ["yes"], "threshold":10_000},
             {"key": "shop", "ignored": [
@@ -104,14 +108,18 @@ class Tests(unittest.TestCase):
                 "waste_dump_site", # no organic use, see https://taginfo.openstreetmap.org/tags/amenity=waste_dump_site
                 "fixme", # not real object type, see https://github.com/Zverik/every_door/issues/880
                 "mobile_money_agent", # import without any organic use
-                "feeding_place", # see https://github.com/openstreetmap/id-tagging-schema/issues/1166
+                "feeding_place", "game_feeding", # see https://github.com/openstreetmap/id-tagging-schema/issues/1166
+                "chair", # see https://github.com/openstreetmap/id-tagging-schema/issues/1895
                 ], "threshold":4_000},
             {"key": "landuse", "ignored": [
                 "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
+                "static_caravan", # maybe landuse=residential + residential=trailer_park (or residential=halting_site ) would be better? Why landuse=static_caravan would be better? landuse=residential with extra tags is in my opinion clearly better as it as accurate and makes easier to process tagged data
             ], "threshold":30_000},
             {"key": "place", "ignored": [
                 "municipality", # appears to be result of imports, not organic mapping
+                "cadastral_community", # Special-purpose tag specific to Czech Republic. See https://www.openstreetmap.org/changeset/183098106
+                "allotments", # special tagging done in limited area due to overreliance on official classification (or maybe it is actually distinct place type not matching either? but still incredibly local)
             ], "threshold":10_000},
             {"key": "railway", "ignored": [
                 "razed", "proposed", # not real
@@ -143,6 +151,8 @@ class Tests(unittest.TestCase):
                 "march_terrace", # https://taginfo.openstreetmap.org/tags/man_made=marsh_terrace#chronology
                 "kiln", # looks imported
                 "heap", # https://www.openstreetmap.org/changeset/144141731
+                "tar_kiln", # mostly imported, limited area, no wiki page, see https://taginfo.openstreetmap.org/tags/man_made=tar_kiln#chronology
+                "dolphin", # mostly imported/added in mass edits, see https://taginfo.openstreetmap.org/tags/man_made=dolphin#chronology
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [], "threshold":1_000},
@@ -162,7 +172,8 @@ class Tests(unittest.TestCase):
                 "yes",
                 "sidewalk", # see https://wiki.openstreetmap.org/wiki/Tag:cycleway=sidewalk
                 "shared", # Formerly used, see https://wiki.openstreetmap.org/wiki/Key%3Acycleway
-                ], "threshold":5_000},
+                "sidepath", # is_sidepath is preferred tagging
+                ], "threshold":8_000},
             {"key": "cycleway:left", "ignored": [], "threshold":5_000},
             {"key": "cycleway:right", "ignored": [], "threshold":5_000},
             {"key": "cycleway:both", "ignored": [], "threshold":5_000},
@@ -173,7 +184,7 @@ class Tests(unittest.TestCase):
             ], "threshold":2_000},
             {"key": "route", "ignored": [
                 "ski", # "can be considered a duplicate of route=piste, which is already supported, actually community-approved, and has gained more traction since." https://wiki.openstreetmap.org/wiki/Proposal:Tag:route%3Dpiste https://taghistory.raifer.tech/?#***/route/ski&***/route/piste https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3605414920
-            ], "threshold":4_000},
+            ], "threshold":5_000},
             {"key": "sport", "ignored": [
                 "cricket_nets", # not an actual sport
                 "football", # support, if any, would be some kind of complaint/QA report, see see https://wiki.openstreetmap.org/wiki/Football and https://wiki.openstreetmap.org/wiki/Tag:sport%3Dfootball
@@ -181,7 +192,10 @@ class Tests(unittest.TestCase):
                 "hockey", # ambiguous, on downward trend, deprecated
                 "exercise", # no documentation, going down, seems inferior to alterbatives and being replaced 
             ], "threshold":2_500, "callback_for_taginfo_data": split_semicolons},
-            {"key": "healthcare", "ignored": ["hospital", "pharmacy", "doctor", "clinic", "dentist"], "threshold":1_000},
+            {"key": "healthcare", "ignored": [
+                "hospital", "pharmacy", "doctor", "clinic", "dentist",
+                "centre", # "unspecific healthcare facility", looks like it comes from some organised editing
+            ], "threshold":2_000},
             {"key": "cuisine", "ignored": [
                 "bakery", # mentioned at https://wiki.openstreetmap.org/wiki/Key:cuisine only as unwanted
                 "fast_food", # listed on wiki as mistagging, big chunk of it is on amenity=fast_food where it is a pointless duplicate at best
@@ -189,8 +203,13 @@ class Tests(unittest.TestCase):
                 "noodles", # listed as duplicate of =noodle
                 "coffee", # looks like an undocumented and unclear duplicate of `cuisine=coffee_shop` (which already is dubious on its own)
                 "international", # is it even meaning anything in practice? Sounds like duplicate of =fusion if it means anything. https://taginfo.openstreetmap.org/tags/cuisine=international shows decline, and as % of cuisine use it would be greater
-                "deli", # https://wiki.openstreetmap.org/wiki/Key%3Acuisine has "A place that sells meats, cheeses, and prepared foods" which is not really a cuisine at all"
+                "deli", # https://wiki.openstreetmap.org/wiki/Key%3Acuisine has it defined as "A place that sells meats, cheeses, and prepared foods" which is not really a cuisine at all
                 "lunch", #  is it really making sense? even in world of broadly-define meaning of "cuisine". wiki has "A style of food typically served in the middle of the day"
+                "pub", # "A restaurant serving beer and food. Consider using amenity=pub instead." at https://wiki.openstreetmap.org/wiki/Key:cuisine
+                "local", # wiki encourages more specific value and I think we can agree with it. Does it require validator complaint?
+                "traditional", # Maybe something more specific from https://wiki.openstreetmap.org/wiki/Key%3Acuisine can be found? 'traditional cuisine' is very widely claimed and effectively does not mean anything
+                "teahouse", # unclear, not supported much by projects listed at taginfo, not documented at https://wiki.openstreetmap.org/wiki/Key%3Acuisine
+                "meat", # entirely covered by diet:vegetarian=no and wiki suggest more specific value, also not really a cuisine classifier at least in my limited experience
             ], "threshold":500, "callback_for_taginfo_data": split_semicolons},
             {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":10_000},
             {"key": "power", "ignored": [
@@ -198,6 +217,8 @@ class Tests(unittest.TestCase):
                 "connection", "inverter", "compensator", "circuit", # confusing expert internal stuff without clear wiki docs
                 "cable_distribution", # looks imported and without documentation
             ], "threshold": 25_000},
+            {"key": "plant:source", "ignored": [], "threshold":50},
+            {"key": "plant:method", "ignored": [], "threshold":50},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
                 "line", # Is it for both overground and underground? If for underground what about verifiability
@@ -210,8 +231,16 @@ class Tests(unittest.TestCase):
             {"key": "religion", "ignored": [], "threshold":10_000},
             {"key": "denomination", "ignored": [], "threshold":10_000},
             {"key": "shelter_type", "ignored": [], "threshold":10_000},
-            {"key": "service", "ignored": [], "threshold":10_000},
+            {"key": "service", "ignored": [
+                "irrigation", # looks like usage=irrigation won and it is fine?
+                "utility", # looks like French-specific tagging not documented on wiki
+                "regional", # unclear, poorly documented and usage appears to be regional and stalled recently
+            ], "threshold":25_000},
             {"key": "social_facility", "ignored": [], "threshold":10_000},
+            {"key": "restriction", "ignored": [], "threshold":1_000},
+            {"key": "resource", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
+            {"key": "recycling_type", "ignored": [], "threshold":1_000},
+            {"key": "playground", "ignored": [], "threshold":2_000},
         ]
         for entry in checked:
             callback_for_taginfo_data = None
