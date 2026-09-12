@@ -115,7 +115,8 @@ class Tests(unittest.TestCase):
                 "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
                 "static_caravan", # maybe landuse=residential + residential=trailer_park (or residential=halting_site ) would be better? Why landuse=static_caravan would be better? landuse=residential with extra tags is in my opinion clearly better as it as accurate and makes easier to process tagged data
-            ], "threshold":30_000},
+                "highway", # no consensus that it is welcome
+            ], "threshold":50_000},
             {"key": "place", "ignored": [
                 "municipality", # appears to be result of imports, not organic mapping
                 "cadastral_community", # Special-purpose tag specific to Czech Republic. See https://www.openstreetmap.org/changeset/183098106
@@ -178,7 +179,10 @@ class Tests(unittest.TestCase):
             {"key": "cycleway:right", "ignored": [], "threshold":5_000},
             {"key": "cycleway:both", "ignored": [], "threshold":5_000},
             {"key": "historic", "ignored": ["heritage", "yes"], "threshold":10_000},
-            {"key": "military", "ignored": ["yes"], "threshold":2_500},
+            {"key": "military", "ignored": [
+                "yes",
+                "nuclear_explosion_site", # mapping events
+                ], "threshold":2_500},
             {"key": "office", "ignored": [
                 "logistics" # debris left by User:RTFM
             ], "threshold":2_000},
@@ -217,8 +221,8 @@ class Tests(unittest.TestCase):
                 "connection", "inverter", "compensator", "circuit", # confusing expert internal stuff without clear wiki docs
                 "cable_distribution", # looks imported and without documentation
             ], "threshold": 25_000},
-            {"key": "plant:source", "ignored": [], "threshold":50},
-            {"key": "plant:method", "ignored": [], "threshold":50},
+            {"key": "plant:source", "ignored": [], "threshold":250},
+            {"key": "plant:method", "ignored": [], "threshold":200},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
                 "line", # Is it for both overground and underground? If for underground what about verifiability
