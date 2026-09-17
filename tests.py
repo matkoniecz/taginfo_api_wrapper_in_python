@@ -276,7 +276,7 @@ class Tests(unittest.TestCase):
 
     def test_run_readme_code_popular_keys_not_used_in_project(self):
         # no issue created for it at https://github.com/openstreetmap/id-tagging-schema/issues
-        # right now it provides no useful info (more ntries need to be skipped or verified)
+        # right now it provides no useful info (more entries need to be skipped or verified)
         project = "id_editor"
         supported = []
         threshold = 500_000
