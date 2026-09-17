@@ -293,18 +293,40 @@ class Tests(unittest.TestCase):
                     break
                 key = entry["key"]
                 banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:", "LINZ:"]
+                banned_key_prefix_for_other_reasons = [
+                    'source:', "source_", # we are nowadays referring to tag it on changeset
+                    "name:", # taginfo listing bug, see https://github.com/openstreetmap/id-tagging-schema/issues/2879
+                    "light:", # extreme detail of lights
+                ]
                 matches_blacklisted = False
-                for prefix in banned_key_prefix_indicating_import_garbage:
+                for prefix in banned_key_prefix_indicating_import_garbage + banned_key_prefix_for_other_reasons:
                     if key.find(prefix) == 0:
                         matches_blacklisted = True
                         break
                 if matches_blacklisted:
                     continue
                 if key in [
+                    # rejected
                     "created_by", # deprecated/discardable, not listed in iD taginfo project
                     "is_in", # deprecated and unwanted
                     "name_1", # weird tagging promoted by old iD versions
-                    "addr:TW:dataset", # unwanted import tag
+                    "addr:TW:dataset", "import", # unwanted import tag
+                    "pmfsefin:idedif", # more impoer identifiers
+                    "circuits", # power mapping of extreme detail
+                    "light:count", # really extremen detail
+                    "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
+                    "addr:inclusion", # https://wiki.openstreetmap.org/wiki/Key:addr:*#Tags_for_interpolation_ways - dubios metadata
+                ]:
+                    continue
+                if key in [
+                    # already requested
+                    "noname", # https://github.com/openstreetmap/id-tagging-schema/issues/1099
+                    "lanes:backward", "lanes:forward", # https://github.com/openstreetmap/id-tagging-schema/issues/2820
+                    "old_name", # https://github.com/openstreetmap/id-tagging-schema/issues/1288
+                    "crossing:signals", # https://github.com/openstreetmap/id-tagging-schema/issues/1118
+
+                    # listed in test_tags_used_in_project function
+                    "roof:material",
                 ]:
                     continue
                 if key not in supported:
