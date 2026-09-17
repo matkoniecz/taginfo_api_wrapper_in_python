@@ -17,7 +17,7 @@ class Tests(unittest.TestCase):
         key = "surface"
         print("all popular values of specific key:")
         for entry in taginfo.query.values_of_key_with_data(key):
-            if(entry['count'] > 1000):
+            if(entry['count'] > 100_000):
                 print(key, "=", entry['value'], str(int(entry['count']/1000)) + "k")
 
     def test_tags_used_in_project(self):
