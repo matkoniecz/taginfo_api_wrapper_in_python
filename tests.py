@@ -245,6 +245,18 @@ class Tests(unittest.TestCase):
             {"key": "resource", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "recycling_type", "ignored": [], "threshold":1_000},
             {"key": "playground", "ignored": [], "threshold":2_000},
+            {"key": "roof:shape", "ignored": [
+                "pitched", # roof:shape=skillion was intended here? Or roof:shape=gabled? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape=pitched
+                '2 faces (pitched)', # duplicates =pitched and therefore =gabled
+                "slanted", # roof:shape=skillion was intended here, likely
+                "skilled", # Maybe roof:shape=gabled was intended here? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape%3Dskillion
+                "mixed", "mix", "Mix", "multi", # duplicates of =many
+                "lean_to", "shed", "gabled_row", "monopitch", # documented in wiki as unclear
+                "1", # clear nonsense
+            ], "threshold":500},
+            {"key": "roof:material", "ignored": [
+                "Asbestos", "Zink", "metal", "gras", # typos reported now in dubious tags
+            ], "threshold":2_000},
         ]
         for entry in checked:
             callback_for_taginfo_data = None
