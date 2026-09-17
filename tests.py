@@ -279,7 +279,7 @@ class Tests(unittest.TestCase):
         # right now it provides no useful info (more entries need to be skipped or verified)
         project = "id_editor"
         supported = []
-        threshold = 500_000
+        threshold = 100_000
         expected_support = []
         for entry in taginfo.query.tagging_used_by_project(project):
             if entry["key"] not in supported:
