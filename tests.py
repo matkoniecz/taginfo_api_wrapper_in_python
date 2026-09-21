@@ -262,7 +262,7 @@ class Tests(unittest.TestCase):
             ], "threshold": 1000},
             {"key": "roof:material", "ignored": [
                 "Asbestos", "zink", "metal", "gras", # typos reported now in dubious tags
-                "cgi", # unclear - reported now in dubious tags, mass added, asked in https://www.openstreetmap.org/changeset/67673600 (also raised https://www.openstreetmap.org/messages/1383486 and https://www.openstreetmap.org/user/SushmaGhimire/history may be contacted, later escalate via https://wiki.openstreetmap.org/wiki/Organised_Editing/Activities ) and https://www.openstreetmap.org/changeset/70389111 TODO
+                "cgi", # see https://www.openstreetmap.org/changeset/70389111 for meaning - see https://taginfo.openstreetmap.org/tags/roof:material=cgi#chronology for why it should not be supported (TODO: record their answer on wiki if they will fail)
                 "rcc", # unclear - reported now in dubious tags, mass added, asked in https://www.openstreetmap.org/changeset/50152325 (see also https://www.openstreetmap.org/user_blocks/7006 ) TODO
                 "metal sheet", # dupe of metal_sheet
             ], "threshold":2_000},
