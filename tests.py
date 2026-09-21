@@ -252,8 +252,8 @@ class Tests(unittest.TestCase):
                 "slanted", # roof:shape=skillion was intended here, likely
                 "skilled", # Maybe roof:shape=gabled was intended here? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape%3Dskillion
                 "mixed", "mix", "Mix", "multi", # duplicates of =many
-                "lean_to", "shed", "gabled_row", "monopitch", # documented in wiki as unclear
-                "1", # clear nonsense
+                "lean_to", "shed", "gabled_row", "monopitch", "sloped", # documented in wiki as unclear
+                "1", "3dr", # clear nonsense
                 "none", # ??? maybe expressing that roof is missing but...
                 "pyramid", # -> pyramidal
                 "dutch_gabled", # not documented, unclear, see https://en.wikipedia.org/wiki/Dutch_gable
