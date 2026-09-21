@@ -268,6 +268,8 @@ class Tests(unittest.TestCase):
             ], "threshold":2_000},
             {"key": "orienteering", "ignored": [
             ], "threshold":1_000},
+            {"key": "healthcare:speciality", "ignored": [
+            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
         ]
         for entry in checked:
             callback_for_taginfo_data = None
