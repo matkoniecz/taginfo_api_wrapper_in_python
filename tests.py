@@ -214,8 +214,9 @@ class Tests(unittest.TestCase):
                 "traditional", # Maybe something more specific from https://wiki.openstreetmap.org/wiki/Key%3Acuisine can be found? 'traditional cuisine' is very widely claimed and effectively does not mean anything
                 "teahouse", # unclear, not supported much by projects listed at taginfo, not documented at https://wiki.openstreetmap.org/wiki/Key%3Acuisine
                 "meat", # entirely covered by diet:vegetarian=no and wiki suggest more specific value, also not really a cuisine classifier at least in my limited experience
+                "hotdog", # should be hot_dog
             ], "threshold":500, "callback_for_taginfo_data": split_semicolons},
-            {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":10_000},
+            {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":20_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
                 "connection", "inverter", "compensator", "circuit", # confusing expert internal stuff without clear wiki docs
@@ -247,16 +248,26 @@ class Tests(unittest.TestCase):
             {"key": "playground", "ignored": [], "threshold":2_000},
             {"key": "roof:shape", "ignored": [
                 "pitched", # roof:shape=skillion was intended here? Or roof:shape=gabled? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape=pitched
-                '2 faces (pitched)', # duplicates =pitched and therefore =gabled
+                '2 faces (pitched)', '2 face (pitched)', # duplicates =pitched and therefore =gabled
                 "slanted", # roof:shape=skillion was intended here, likely
                 "skilled", # Maybe roof:shape=gabled was intended here? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape%3Dskillion
                 "mixed", "mix", "Mix", "multi", # duplicates of =many
                 "lean_to", "shed", "gabled_row", "monopitch", # documented in wiki as unclear
                 "1", # clear nonsense
-            ], "threshold":500},
+                "none", # ??? maybe expressing that roof is missing but...
+                "pyramid", # -> pyramidal
+                "dutch_gabled", # not documented, unclear, see https://en.wikipedia.org/wiki/Dutch_gable
+                "round_gabled", # featured at https://wiki.openstreetmap.org/wiki/OSM-4D/Roof_table only
+                "double_saltbox", "triple_saltbox", "quadruple_saltbox", # https://wiki.openstreetmap.org/w/index.php?title=Key:roof:shape&diff=prev&oldid=2887374
+            ], "threshold": 1000},
             {"key": "roof:material", "ignored": [
-                "Asbestos", "Zink", "metal", "gras", # typos reported now in dubious tags
+                "Asbestos", "zink", "metal", "gras", # typos reported now in dubious tags
+                "cgi", # unclear - reported now in dubious tags, mass added, asked in https://www.openstreetmap.org/changeset/67673600 (also raised https://www.openstreetmap.org/messages/1383486 and https://www.openstreetmap.org/user/SushmaGhimire/history may be contacted, later escalate via https://wiki.openstreetmap.org/wiki/Organised_Editing/Activities ) and https://www.openstreetmap.org/changeset/70389111 TODO
+                "rcc", # unclear - reported now in dubious tags, mass added, asked in https://www.openstreetmap.org/changeset/50152325 (see also https://www.openstreetmap.org/user_blocks/7006 ) TODO
+                "metal sheet", # dupe of metal_sheet
             ], "threshold":2_000},
+            {"key": "orienteering", "ignored": [
+            ], "threshold":1_000},
         ]
         for entry in checked:
             callback_for_taginfo_data = None
