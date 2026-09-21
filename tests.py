@@ -337,6 +337,7 @@ class Tests(unittest.TestCase):
                     "lanes:backward", "lanes:forward", # https://github.com/openstreetmap/id-tagging-schema/issues/2820
                     "old_name", # https://github.com/openstreetmap/id-tagging-schema/issues/1288
                     "crossing:signals", # https://github.com/openstreetmap/id-tagging-schema/issues/1118
+                    "roof:levels", # https://github.com/openstreetmap/id-tagging-schema/issues/2053
 
                     # listed in test_tags_used_in_project function
                     "roof:material",
