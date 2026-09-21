@@ -324,7 +324,7 @@ class Tests(unittest.TestCase):
                     "is_in", # deprecated and unwanted
                     "name_1", # weird tagging promoted by old iD versions
                     "addr:TW:dataset", "import", # unwanted import tag
-                    "pmfsefin:idedif", # more impoer identifiers
+                    "pmfsefin:idedif", # more import identifiers
                     "circuits", # power mapping of extreme detail
                     "light:count", # really extremen detail
                     "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
