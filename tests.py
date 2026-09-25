@@ -156,7 +156,9 @@ class Tests(unittest.TestCase):
                 "dolphin", # mostly imported/added in mass edits, see https://taginfo.openstreetmap.org/tags/man_made=dolphin#chronology
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
-            {"key": "aerialway", "ignored": [], "threshold":1_000},
+            {"key": "aerialway", "ignored": [
+                "razed", "abandoned", "proposed", "disused", "construction", # mistagged
+            ], "threshold":100},
             {"key": "aeroway", "ignored": [
                 "navigationaid", # https://github.com/openstreetmap/id-tagging-schema/issues/2188
                 "tower", # looks like tagging is still not settled
@@ -216,7 +218,7 @@ class Tests(unittest.TestCase):
                 "meat", # entirely covered by diet:vegetarian=no and wiki suggest more specific value, also not really a cuisine classifier at least in my limited experience
                 "hotdog", # should be hot_dog
             ], "threshold":500, "callback_for_taginfo_data": split_semicolons},
-            {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":20_000},
+            {"key": "surface", "ignored": ["cobblestone", "cement", "earth"], "threshold":10_000},
             {"key": "power", "ignored": [
                 "abandoned:tower" # it clearly should be abandoned:power=tower, see https://taginfo.openstreetmap.org/tags/power=abandoned%3Atower
                 "connection", "inverter", "compensator", "circuit", # confusing expert internal stuff without clear wiki docs
@@ -244,7 +246,10 @@ class Tests(unittest.TestCase):
             {"key": "social_facility", "ignored": [], "threshold":10_000},
             {"key": "restriction", "ignored": [], "threshold":1_000},
             {"key": "resource", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
-            {"key": "recycling_type", "ignored": [], "threshold":1_000},
+            {"key": "material", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
+            {"key": "recycling_type", "ignored": [
+                'reverse_vending_machine', # TODO revert that bad import
+            ], "threshold":1_000},
             {"key": "playground", "ignored": [], "threshold":2_000},
             {"key": "roof:shape", "ignored": [
                 "pitched", # roof:shape=skillion was intended here? Or roof:shape=gabled? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape=pitched
@@ -258,6 +263,7 @@ class Tests(unittest.TestCase):
                 "pyramid", # -> pyramidal
                 "dutch_gabled", # not documented, unclear, see https://en.wikipedia.org/wiki/Dutch_gable
                 "round_gabled", # featured at https://wiki.openstreetmap.org/wiki/OSM-4D/Roof_table only
+                "offset_pent_roof", # not documented, niche, appears in huge jump - https://www.openstreetmap.org/changeset/144129131 TODO look for who else added it
                 "double_saltbox", "triple_saltbox", "quadruple_saltbox", # https://wiki.openstreetmap.org/w/index.php?title=Key:roof:shape&diff=prev&oldid=2887374
             ], "threshold": 1000},
             {"key": "roof:material", "ignored": [
@@ -270,8 +276,58 @@ class Tests(unittest.TestCase):
             ], "threshold":1_000},
             {"key": "healthcare:speciality", "ignored": [
             ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
+            {"key": "leaf_type", "ignored": [
+            ], "threshold":1_000},
+            {"key": "leaf_cycle", "ignored": [
+            ], "threshold":1_000},
+            {"key": "social_facility:for", "ignored": [
+            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
+            {"key": "bollard", "ignored": [
+                "concrete", "wood", "stone", "rock", "metal", # should be material= TODO target
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+            {"key": "board_type", "ignored": [
+            ], "threshold":100},
+            {"key": "animal_boarding", "ignored": [
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+            {"key": "animal_breeding", "ignored": [
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+            {"key": "agrarian", "ignored": [
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+            {"key": "tower:type", "ignored": [
+            ], "threshold":100},
+            {"key": "telescope:type", "ignored": [
+            ], "threshold":100},
+            # https://github.com/search?q=repo%3Aopenstreetmap%2Fid-tagging-schema+produce&type=code
+            # https://taginfo.openstreetmap.org/keys/produce#values
+            {"key": "produce", "ignored": [
+                'Castanea', 'timber;wood', # in dubious tags
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "crop", "ignored": [
+                "corn", # https://wiki.openstreetmap.org/wiki/Tag:crop%3Dcorn - maybe as validation error? TODO
+                "cana-de-açúcar", # dupe of sugarcane, from bad import (yes, got dubious tags listing)
+                "protein",  # limited use, nonsense, listed in dubious tags
+                "ofc", # limited use, unclear, https://www.openstreetmap.org/changeset/69586363 + dubious tags listing
+                "Qat", # limited use, bad form
+                'bananas,_papapyas,_mangos', # listed in known typos
+                'dendê', # goes to dubious tags 
+            ], "threshold":400, "callback_for_taginfo_data": split_semicolons},
+            {"key": "collector", "ignored": [
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "clothes", "ignored": [
+                "unisexs", # bad duplicate of unisex
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "crossing", "ignored": [
+                "unknown", "zebra;marked", "standard", "no_traffic_signals", # reported in dubious tags now
+            ], "threshold":200},
+            {"key": "castle_type", "ignored": [
+            ], "threshold":100},
+            {"key": "bunker_type", "ignored": [
+            ], "threshold":100},
+            # https://github.com/openstreetmap/id-tagging-schema/issues/1829#issuecomment-3581461525
         ]
         for entry in checked:
+            if entry["key"] in ["line_management", "line_attachment"]:
+                raise Exception("not viable by listing, these tags got own intricate syntax")
             callback_for_taginfo_data = None
             if "callback_for_taginfo_data" in entry:
                 callback_for_taginfo_data = entry["callback_for_taginfo_data"]
@@ -305,11 +361,15 @@ class Tests(unittest.TestCase):
                     finished = True
                     break
                 key = entry["key"]
-                banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:", "LINZ:"]
+                banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:", "LINZ:",
+                "massgis:", "CLC:", "canvec:",
+                "naptan:", # this one inludes some nongarbage (maybe)
+                ]
                 banned_key_prefix_for_other_reasons = [
                     'source:', "source_", # we are nowadays referring to tag it on changeset
                     "name:", # taginfo listing bug, see https://github.com/openstreetmap/id-tagging-schema/issues/2879
                     "light:", # extreme detail of lights
+                    "is_in:",
                 ]
                 matches_blacklisted = False
                 for prefix in banned_key_prefix_indicating_import_garbage + banned_key_prefix_for_other_reasons:
@@ -328,7 +388,21 @@ class Tests(unittest.TestCase):
                     "circuits", # power mapping of extreme detail
                     "light:count", # really extremen detail
                     "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
+                    "naptan:Bearing", # imported, dubious
                     "addr:inclusion", # https://wiki.openstreetmap.org/wiki/Key:addr:*#Tags_for_interpolation_ways - dubios metadata
+
+                    "line", # details of power mapping, dubious
+
+                    # can be added if comunity requests unprompted
+                    "naptan:verified", # import
+                    "addr:street:it", "addr:street:de",
+                    "highway:category:pl",
+
+                    # no organic use (import, organised editing)
+                    "building:condition",
+
+                    #bad import, should be purged
+                    "addr:street:type",
                 ]:
                     continue
                 if key in [
@@ -341,6 +415,16 @@ class Tests(unittest.TestCase):
 
                     # listed in test_tags_used_in_project function
                     "roof:material",
+
+                    # TODO - consider
+                    "check_date:opening_hours",
+                    "sidewalk:both:surface",
+                    "sidewalk:left:surface",
+                    "sidewalk:right:surface",
+                    "sidewalk:surface",
+
+                    # requires group support TODO
+                    'maxspeed:bus',
                 ]:
                     continue
                 if key not in supported:
