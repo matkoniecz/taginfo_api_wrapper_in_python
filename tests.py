@@ -172,6 +172,7 @@ class Tests(unittest.TestCase):
             ], "threshold":8_000},
             {"key": "advertising", "ignored": [], "threshold":3_000},
             {"key": "aerialway", "ignored": [
+                "explosive", # wat? rare, listed on dubious tags
                 "razed", "abandoned", "proposed", "disused", "construction", # mistagged
             ], "threshold":100},
             {"key": "aeroway", "ignored": [
@@ -261,7 +262,9 @@ class Tests(unittest.TestCase):
             {"key": "social_facility", "ignored": [], "threshold":10_000},
             {"key": "restriction", "ignored": [], "threshold":1_000},
             {"key": "resource", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
-            {"key": "material", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
+            {"key": "material", "ignored": [
+                "earth", # duplicate of soil with "Soil, Earth" label
+            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "recycling_type", "ignored": [
                 'reverse_vending_machine', # TODO revert that bad import
             ], "threshold":1_000},
@@ -294,6 +297,8 @@ class Tests(unittest.TestCase):
             {"key": "leaf_type", "ignored": [
             ], "threshold":1_000},
             {"key": "leaf_cycle", "ignored": [
+            ], "threshold":1_000},
+            {"key": "manhole", "ignored": [
             ], "threshold":1_000},
             {"key": "social_facility:for", "ignored": [
             ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
@@ -328,6 +333,32 @@ class Tests(unittest.TestCase):
             ], "threshold":400, "callback_for_taginfo_data": split_semicolons},
             {"key": "collector", "ignored": [
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "fitness_station", "ignored": [
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "product", "ignored": [
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "plant", "ignored": [
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "substance", "ignored": [
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "waste", "ignored": [
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "fishing", "ignored": [
+            ], "threshold":100},
+            {"key": "community_centre", "ignored": [
+            ], "threshold":100},
+            {"key": "wall", "ignored": [
+            ], "threshold":100},
+            {"key": "seamark:wreck:category", "ignored": [
+            ], "threshold":100},
+            {"key": "seamark:mooring:category", "ignored": [
+            ], "threshold":100},
+            {"key": "sample_collection", "ignored": [
+            ], "threshold":100},
+            {"key": "water", "ignored": [
+            ], "threshold":100},
+            {"key": "shoes", "ignored": [
+            ], "threshold":100},
             {"key": "clothes", "ignored": [
                 "unisexs", # bad duplicate of unisex
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
@@ -338,6 +369,19 @@ class Tests(unittest.TestCase):
             ], "threshold":100},
             {"key": "bunker_type", "ignored": [
             ], "threshold":100},
+            {"key": "military_service", "ignored": [
+            ], "threshold":100},
+            {"key": "memorial", "ignored": [
+                'koshinto', 'jizo', # unclear, listed in dubious tags
+                "memorial", "yes", "person", # unspecific, listed in dubious tags
+                'de_verloren_sleutel', 'Distanzsäule', 'stein_der_erinnerung', # not in English, listed in dubious tags
+            ], "threshold":10},
+            {"key": "marker", "ignored": [
+                # colours go to other field, listed in dubious tags
+                "yellow", "orange", "red", "blue", "brown", "black", "purple", "green"
+            ], "threshold":100},
+            
+            
             # https://github.com/openstreetmap/id-tagging-schema/issues/1829#issuecomment-3581461525
         ]
         for entry in checked:
@@ -405,12 +449,15 @@ class Tests(unittest.TestCase):
                     "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
                     "naptan:Bearing", # imported, dubious
                     "addr:inclusion", # https://wiki.openstreetmap.org/wiki/Key:addr:*#Tags_for_interpolation_ways - dubios metadata
+                    "abandoned:building", # bad tagging
 
                     "line", # details of power mapping, dubious
 
                     # can be added if comunity requests unprompted
                     "naptan:verified", # import
                     "addr:street:it", "addr:street:de",
+                    "addr:city:en",
+                    "addr:streetnumber",
                     "highway:category:pl",
 
                     # no organic use (import, organised editing)
