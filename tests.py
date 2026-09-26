@@ -4,6 +4,21 @@ import osm_bot_abstraction_layer.tag_knowledge as tag_knowledge
 from collections import defaultdict
 
 class Tests(unittest.TestCase):
+    def test_look_at_wiki_page_support_for_tagging_used_by_project(self):
+        for entry in taginfo.query.tagging_used_by_project("id_editor"):
+            if entry["in_wiki"]:
+                continue
+            if entry['description'] in ['🄳🄳 (discarded tag)']:
+                continue
+            if '🄳 (deprecated tag) ' in entry['description']:
+                continue
+            if entry["value"] == None:
+                print(entry["key"], "is in iD presets and not documented on wiki")
+                #print(entry)
+                print("https://wiki.openstreetmap.org/w/index.php?title=Key:" + entry["key"] + "&action=edit&redlink=1")
+                print()
+    
+
     def test_run_readme_code_key_usage_count(self):
         key = "name:ab"
         print(key, "is used", taginfo.query.count_appearances_of_key(key), "times")
