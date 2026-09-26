@@ -263,6 +263,7 @@ class Tests(unittest.TestCase):
             {"key": "restriction", "ignored": [], "threshold":1_000},
             {"key": "resource", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "material", "ignored": [
+                "canvas", # not for now, very concentrated in few places https://overpass-turbo.eu/s/2x5H
                 "earth", # duplicate of soil with "Soil, Earth" label
             ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "recycling_type", "ignored": [
@@ -303,24 +304,58 @@ class Tests(unittest.TestCase):
             {"key": "social_facility:for", "ignored": [
             ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "bollard", "ignored": [
-                "concrete", "wood", "stone", "rock", "metal", # should be material= TODO target
-            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+                'FR:J1', # bad values, listed in dubious tags
+
+                'unremovable', # TODO Use bollard=fixed - scattered across world
+                'irremovable' # TODO Use bollard=fixed - just few groups https://overpass-turbo.eu/s/2x62
+
+                # should be material= - listed in dubious tags
+                # bot edit proposed
+                # https://community.openstreetmap.org/t/proposed-automated-edit-move-bollard-concrete-wood-stone-rock-metal-plastic-to-material-recurring/148098
+                "concrete", "wood", "stone", "rock", "metal",
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "board_type", "ignored": [
             ], "threshold":100},
+            {"key": "archaeological_site", "ignored": [
+            ], "threshold":100},
+            {"key": "bridge", "ignored": [
+                "razed", # bad lifecycle tagging
+            ], "threshold":100},
+            {"key": "tunnel", "ignored": [
+            ], "threshold":100},
+            {"key": "ceremonial_gate", "ignored": [
+            ], "threshold":10},
+            {"key": "beauty", "ignored": [
+                'массаж', # not in English
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "animal_boarding", "ignored": [
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "animal_breeding", "ignored": [
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+            {"key": "animal_shelter", "ignored": [
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "agrarian", "ignored": [
+                "yes", # just bogus TODO remove see https://community.openstreetmap.org/t/shop-trade-trade-yes-and-some-other-useless-yes-tags/144992 and https://community.openstreetmap.org/t/consultation-can-i-just-edit-it-or-should-i-go-through-bot-edit-approval/148117
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "tower:type", "ignored": [
+                "chimney", "stupa", # use man_made= tagging
+                "branch", # niche power stuff, see https://wiki.openstreetmap.org/wiki/Proposal:Lines_attachments 
+                # and https://wiki.openstreetmap.org/wiki/Proposal_talk:Lines_attachments#tower:type=branch_seems_to_be_not_documented_yet
+                # also lanaded in dubious tags
+                "crossing", # like above
+                "portal", # like above but not mentioned in that proposal
+                "suspension", "anchor", "termination", # more power power:type
+                "silo", # should be man_made=silo, added to dubious tags
+                "power", # should be power=tower, added to dubious tags
+                "concrete", # should be material=concrete, added to dubious tags
+                "advertising", "BT", "HT", # unclear, not documented, added to dubious tags
             ], "threshold":100},
             {"key": "telescope:type", "ignored": [
             ], "threshold":100},
             # https://github.com/search?q=repo%3Aopenstreetmap%2Fid-tagging-schema+produce&type=code
             # https://taginfo.openstreetmap.org/keys/produce#values
             {"key": "produce", "ignored": [
-                'Castanea', 'timber;wood', # in dubious tags
+                'Castanea', 'timber;wood', "wood", "palm oil", "sewage" # in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "crop", "ignored": [
                 "corn", # https://wiki.openstreetmap.org/wiki/Tag:crop%3Dcorn - maybe as validation error? TODO
@@ -348,6 +383,11 @@ class Tests(unittest.TestCase):
             {"key": "community_centre", "ignored": [
             ], "threshold":100},
             {"key": "wall", "ignored": [
+                # yes, all bad reported at dubious tags
+                "retaining_wall", # just tag barrier=retaining_wall
+                "Devon", "Innenmauer", # ???
+                "yes", "wall", # purge those TODO
+                "wood", "stone", "brick", "concrete", # should be material= TODO get official deprecation
             ], "threshold":100},
             {"key": "seamark:wreck:category", "ignored": [
             ], "threshold":100},
@@ -356,6 +396,9 @@ class Tests(unittest.TestCase):
             {"key": "sample_collection", "ignored": [
             ], "threshold":100},
             {"key": "water", "ignored": [
+                "pan", "Pan", # landuse=salt_pond duplicate, in dubious tags
+            ], "threshold":100},
+            {"key": "artwork_type", "ignored": [
             ], "threshold":100},
             {"key": "shoes", "ignored": [
             ], "threshold":100},
@@ -367,16 +410,16 @@ class Tests(unittest.TestCase):
             ], "threshold":200},
             {"key": "castle_type", "ignored": [
             ], "threshold":100},
-            {"key": "bunker_type", "ignored": [
-            ], "threshold":100},
             {"key": "military_service", "ignored": [
             ], "threshold":100},
             {"key": "memorial", "ignored": [
-                'koshinto', 'jizo', # unclear, listed in dubious tags
+                'koshinto', 'jizo', '歌碑', "star", "gate", "light", "boat" # unclear, listed in dubious tags
                 "memorial", "yes", "person", # unspecific, listed in dubious tags
                 'de_verloren_sleutel', 'Distanzsäule', 'stein_der_erinnerung', # not in English, listed in dubious tags
-            ], "threshold":10},
+            ], "threshold":30},
             {"key": "marker", "ignored": [
+                '右側', 'cng', "stile", # meaning unclear, listed in dubious tags
+                "missing", # wat
                 # colours go to other field, listed in dubious tags
                 "yellow", "orange", "red", "blue", "brown", "black", "purple", "green"
             ], "threshold":100},
@@ -456,7 +499,7 @@ class Tests(unittest.TestCase):
                     # can be added if comunity requests unprompted
                     "naptan:verified", # import
                     "addr:street:it", "addr:street:de",
-                    "addr:city:en",
+                    "addr:city:en", 'addr:district:en', 'addr:province:en', 'addr:street:en', 'addr:subdistrict:en',
                     "addr:streetnumber",
                     "highway:category:pl",
 
@@ -465,6 +508,9 @@ class Tests(unittest.TestCase):
 
                     #bad import, should be purged
                     "addr:street:type",
+                    
+                    # seems to be in process of rejection by community
+                    'brand:wikipedia',
                 ]:
                     continue
                 if key in [
