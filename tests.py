@@ -205,6 +205,7 @@ class Tests(unittest.TestCase):
                 "logistics" # debris left by User:RTFM
             ], "threshold":2_000},
             {"key": "route", "ignored": [
+                "power", # https://github.com/openstreetmap/id-tagging-schema/issues/2813
                 "ski", # "can be considered a duplicate of route=piste, which is already supported, actually community-approved, and has gained more traction since." https://wiki.openstreetmap.org/wiki/Proposal:Tag:route%3Dpiste https://taghistory.raifer.tech/?#***/route/ski&***/route/piste https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3605414920
             ], "threshold":5_000},
             {"key": "sport", "ignored": [
@@ -300,6 +301,7 @@ class Tests(unittest.TestCase):
             {"key": "leaf_cycle", "ignored": [
             ], "threshold":1_000},
             {"key": "manhole", "ignored": [
+                "unknown",
             ], "threshold":1_000},
             {"key": "social_facility:for", "ignored": [
             ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
@@ -307,7 +309,7 @@ class Tests(unittest.TestCase):
                 'FR:J1', # bad values, listed in dubious tags
 
                 'unremovable', # TODO Use bollard=fixed - scattered across world
-                'irremovable' # TODO Use bollard=fixed - just few groups https://overpass-turbo.eu/s/2x62
+                'irremovable', # TODO Use bollard=fixed - just few groups https://overpass-turbo.eu/s/2x62 - https://www.openstreetmap.org/note/5541804 https://www.openstreetmap.org/note/5541803 https://www.openstreetmap.org/note/5541802 - if no response check who_added output for this tag
 
                 # should be material= - listed in dubious tags
                 # bot edit proposed
@@ -315,11 +317,11 @@ class Tests(unittest.TestCase):
                 "concrete", "wood", "stone", "rock", "metal",
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "board_type", "ignored": [
-            ], "threshold":100},
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "archaeological_site", "ignored": [
             ], "threshold":100},
             {"key": "bridge", "ignored": [
-                "razed", # bad lifecycle tagging
+                "razed", "proposed", # bad lifecycle tagging
             ], "threshold":100},
             {"key": "tunnel", "ignored": [
             ], "threshold":100},
@@ -367,7 +369,7 @@ class Tests(unittest.TestCase):
                 'dendê', # goes to dubious tags 
             ], "threshold":400, "callback_for_taginfo_data": split_semicolons},
             {"key": "collector", "ignored": [
-            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "fitness_station", "ignored": [
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "product", "ignored": [
@@ -377,6 +379,7 @@ class Tests(unittest.TestCase):
             {"key": "substance", "ignored": [
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "waste", "ignored": [
+                "éteignoir", "Domestic", # bad, listed in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "fishing", "ignored": [
             ], "threshold":100},
@@ -385,7 +388,7 @@ class Tests(unittest.TestCase):
             {"key": "wall", "ignored": [
                 # yes, all bad reported at dubious tags
                 "retaining_wall", # just tag barrier=retaining_wall
-                "Devon", "Innenmauer", # ???
+                "Devon", "Innenmauer", "ret", # ???
                 "yes", "wall", # purge those TODO
                 "wood", "stone", "brick", "concrete", # should be material= TODO get official deprecation
             ], "threshold":100},
@@ -396,9 +399,14 @@ class Tests(unittest.TestCase):
             {"key": "sample_collection", "ignored": [
             ], "threshold":100},
             {"key": "water", "ignored": [
+                "natural", # listed in dubious tags
+                "spring", # looks misused in variety of ways
                 "pan", "Pan", # landuse=salt_pond duplicate, in dubious tags
             ], "threshold":100},
             {"key": "artwork_type", "ignored": [
+                "stolperstein", # terrible tagging
+                "dwarf", # https://wiki.openstreetmap.org/wiki/Tag%3Aartwork_type%3Ddwarf ...
+                "star", # https://commons.wikimedia.org/wiki/File:2025-03-26%20Marjanishvili%20Theatre%20walk%20of%20fame.jpg
             ], "threshold":100},
             {"key": "shoes", "ignored": [
             ], "threshold":100},
@@ -406,19 +414,24 @@ class Tests(unittest.TestCase):
                 "unisexs", # bad duplicate of unisex
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "crossing", "ignored": [
-                "unknown", "zebra;marked", "standard", "no_traffic_signals", # reported in dubious tags now
+                # reported in dubious tags now
+                "unknown", "zebra;marked", "standard", "no_traffic_signals", "island", "crossing_island", "bridge",
+                "stop"
             ], "threshold":200},
             {"key": "castle_type", "ignored": [
             ], "threshold":100},
             {"key": "military_service", "ignored": [
             ], "threshold":100},
             {"key": "memorial", "ignored": [
+                # memorial=buoy ? see https://commons.wikimedia.org/wiki/File:Memorial_buoy_to_Jack_Mariti_in_Burry_Port_Harbour_-_geograph.org.uk_-_3602516.jpg
+
                 'koshinto', 'jizo', '歌碑', "star", "gate", "light", "boat" # unclear, listed in dubious tags
-                "memorial", "yes", "person", # unspecific, listed in dubious tags
+                "memorial", "yes", "person", "public_person", # unspecific, listed in dubious tags
                 'de_verloren_sleutel', 'Distanzsäule', 'stein_der_erinnerung', # not in English, listed in dubious tags
-            ], "threshold":30},
+            ], "threshold":1000}, # this will not escape taginfo hell any time soon...
             {"key": "marker", "ignored": [
                 '右側', 'cng', "stile", # meaning unclear, listed in dubious tags
+                'borderpole', # duplicate of another value, listed in dubious tags
                 "missing", # wat
                 # colours go to other field, listed in dubious tags
                 "yellow", "orange", "red", "blue", "brown", "black", "purple", "green"
@@ -488,11 +501,12 @@ class Tests(unittest.TestCase):
                     "addr:TW:dataset", "import", # unwanted import tag
                     "pmfsefin:idedif", # more import identifiers
                     "circuits", # power mapping of extreme detail
-                    "light:count", # really extremen detail
+                    "light:count", # really extreme detail
                     "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
                     "naptan:Bearing", # imported, dubious
                     "addr:inclusion", # https://wiki.openstreetmap.org/wiki/Key:addr:*#Tags_for_interpolation_ways - dubios metadata
                     "abandoned:building", # bad tagging
+                    "surface_survey", # should be check_date:surface
 
                     "line", # details of power mapping, dubious
 
@@ -507,10 +521,15 @@ class Tests(unittest.TestCase):
                     "building:condition",
 
                     #bad import, should be purged
+                    "standing",
                     "addr:street:type",
+                    "building:usage:pl",
                     
                     # seems to be in process of rejection by community
                     'brand:wikipedia',
+
+                    # dubious
+                    "opening_hours:signed", "nohousenumber", "maxweight:signed", "noref",
                 ]:
                     continue
                 if key in [
@@ -530,6 +549,7 @@ class Tests(unittest.TestCase):
                     "sidewalk:left:surface",
                     "sidewalk:right:surface",
                     "sidewalk:surface",
+                    "genus:de", "genus:fr",
 
                     # requires group support TODO
                     'maxspeed:bus',
