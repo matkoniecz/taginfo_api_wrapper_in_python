@@ -341,12 +341,11 @@ class Tests(unittest.TestCase):
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "tower:type", "ignored": [
                 "chimney", "stupa", # use man_made= tagging
-                "branch", # niche power stuff, see https://wiki.openstreetmap.org/wiki/Proposal:Lines_attachments 
-                # and https://wiki.openstreetmap.org/wiki/Proposal_talk:Lines_attachments#tower:type=branch_seems_to_be_not_documented_yet
-                # also lanaded in dubious tags
-                "crossing", # like above
-                "portal", # like above but not mentioned in that proposal
-                "suspension", "anchor", "termination", # more power power:type
+                "branch", # deprecated niche power stuff, see https://wiki.openstreetmap.org/wiki/Proposal:Lines_attachments 
+                # also landed in dubious tags
+                "termination", "crossing", # like above
+                "portal", # looks like niche power stuff but not even documented
+                "suspension", "anchor", # more power power:type
                 "silo", # should be man_made=silo, added to dubious tags
                 "power", # should be power=tower, added to dubious tags
                 "concrete", # should be material=concrete, added to dubious tags
@@ -411,12 +410,13 @@ class Tests(unittest.TestCase):
             {"key": "shoes", "ignored": [
             ], "threshold":100},
             {"key": "clothes", "ignored": [
+                "yes", # shop=clothes clothes=yes is mostly result of iD bug and even when added manually it makes no sense
                 "unisexs", # bad duplicate of unisex
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "crossing", "ignored": [
                 # reported in dubious tags now
-                "unknown", "zebra;marked", "standard", "no_traffic_signals", "island", "crossing_island", "bridge",
-                "stop"
+                "unknown", "zebra;marked", "standard", "no_traffic_signals", "island", "crossing_island", 
+                "bridge", "stop", "stop_sign", "pedestrian_signals",
             ], "threshold":200},
             {"key": "castle_type", "ignored": [
             ], "threshold":100},
@@ -425,11 +425,12 @@ class Tests(unittest.TestCase):
             {"key": "memorial", "ignored": [
                 # memorial=buoy ? see https://commons.wikimedia.org/wiki/File:Memorial_buoy_to_Jack_Mariti_in_Burry_Port_Harbour_-_geograph.org.uk_-_3602516.jpg
 
-                'koshinto', 'jizo', '歌碑', "star", "gate", "light", "boat" # unclear, listed in dubious tags
+                'koshinto', 'jizo', '歌碑', "star", "gate", "light", "boat", # unclear, listed in dubious tags
                 "memorial", "yes", "person", "public_person", # unspecific, listed in dubious tags
                 'de_verloren_sleutel', 'Distanzsäule', 'stein_der_erinnerung', # not in English, listed in dubious tags
             ], "threshold":1000}, # this will not escape taginfo hell any time soon...
             {"key": "marker", "ignored": [
+                'sandstone', # TODO should be material=sandstone
                 '右側', 'cng', "stile", # meaning unclear, listed in dubious tags
                 'borderpole', # duplicate of another value, listed in dubious tags
                 "missing", # wat
