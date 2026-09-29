@@ -69,7 +69,7 @@ class Tests(unittest.TestCase):
             collected_info_per_split_value = defaultdict(int)
             for entry in collected_taginfo_entries:
                 for value in entry["value"].split(";"):
-                    collected_info_per_split_value[value] += entry["count"]
+                    collected_info_per_split_value[value.strip()] += entry["count"]
             returned = []
             for value, count in collected_info_per_split_value.items():
                 returned.append({"value": value, "count": count})
