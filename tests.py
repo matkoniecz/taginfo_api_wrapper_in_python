@@ -81,7 +81,10 @@ class Tests(unittest.TestCase):
                 "median", # https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
                 "no", # it seems to be that support in any way is not really needed or useful
             ], "threshold":2_800},
-            {"key": "attraction", "ignored": [], "threshold":2_000},
+            {"key": "attraction", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/attraction.json
+                "yes",
+            ], "threshold":500},
             {"key": "cemetery", "ignored": [], "threshold":2_000},
             {"key": "building", "ignored": [
                 'silo', 'storage_tank', 'slurry_tank', # smells like mistagging for renderer
@@ -126,12 +129,6 @@ class Tests(unittest.TestCase):
                 "feeding_place", "game_feeding", # see https://github.com/openstreetmap/id-tagging-schema/issues/1166
                 "chair", # see https://github.com/openstreetmap/id-tagging-schema/issues/1895
                 ], "threshold":4_000},
-            {"key": "landuse", "ignored": [
-                "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
-                "logging", # simply bad tagging schema
-                "static_caravan", # maybe landuse=residential + residential=trailer_park (or residential=halting_site ) would be better? Why landuse=static_caravan would be better? landuse=residential with extra tags is in my opinion clearly better as it as accurate and makes easier to process tagged data
-                "highway", # no consensus that it is welcome
-            ], "threshold":50_000},
             {"key": "place", "ignored": [
                 "municipality", # appears to be result of imports, not organic mapping
                 "cadastral_community", # Special-purpose tag specific to Czech Republic. See https://www.openstreetmap.org/changeset/183098106
@@ -144,11 +141,12 @@ class Tests(unittest.TestCase):
                 "stop", # internal, ptv2-style duplicate
                 ], "threshold":5_000},
             {"key": "barrier", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/barrier.json
                 "line", # old tagging for renderer from days when OSM Carto was showing all barrier= values
                 "sliding_gate", # https://github.com/openstreetmap/id-tagging-schema/issues/1171
                 "field_boundary", # looks like import/narrowly used/failed experiment, not something with organic use: https://taginfo.openstreetmap.org/tags/barrier=field_boundary
                 "door", # https://taginfo.openstreetmap.org/tags/barrier=door#overview + no documentation
-            ], "threshold":4_000},
+            ], "threshold":2_000},
             {"key": "obstacle", "ignored": [
             ], "threshold":4_000},
             {"key": "highway", "ignored": ["proposed", "no", "razed", "disused", "planned"], "threshold":1_000},
@@ -242,7 +240,9 @@ class Tests(unittest.TestCase):
                 "cable_distribution", # looks imported and without documentation
             ], "threshold": 25_000},
             {"key": "plant:source", "ignored": [], "threshold":250},
+            {"key": "generator:source", "ignored": [], "threshold":250},
             {"key": "plant:method", "ignored": [], "threshold":200},
+            {"key": "generator:method", "ignored": [], "threshold":200},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
                 "line", # Is it for both overground and underground? If for underground what about verifiability
@@ -261,6 +261,8 @@ class Tests(unittest.TestCase):
                 "regional", # unclear, poorly documented and usage appears to be regional and stalled recently
             ], "threshold":25_000},
             {"key": "social_facility", "ignored": [], "threshold":10_000},
+            {"key": "social_facility:for", "ignored": [
+            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "restriction", "ignored": [], "threshold":1_000},
             {"key": "resource", "ignored": [], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "material", "ignored": [
@@ -303,8 +305,6 @@ class Tests(unittest.TestCase):
             {"key": "manhole", "ignored": [
                 "unknown",
             ], "threshold":1_000},
-            {"key": "social_facility:for", "ignored": [
-            ], "threshold":1_000, "callback_for_taginfo_data": split_semicolons},
             {"key": "bollard", "ignored": [
                 'FR:J1', # bad values, listed in dubious tags
 
@@ -321,12 +321,11 @@ class Tests(unittest.TestCase):
             {"key": "archaeological_site", "ignored": [
             ], "threshold":100},
             {"key": "bridge", "ignored": [
+                "bent", # in dubious tags, if about damage then othogonal to other bridge= values...
                 "razed", "proposed", # bad lifecycle tagging
             ], "threshold":100},
             {"key": "tunnel", "ignored": [
             ], "threshold":100},
-            {"key": "ceremonial_gate", "ignored": [
-            ], "threshold":10},
             {"key": "beauty", "ignored": [
                 'массаж', # not in English
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
@@ -340,11 +339,11 @@ class Tests(unittest.TestCase):
                 "yes", # just bogus TODO remove see https://community.openstreetmap.org/t/shop-trade-trade-yes-and-some-other-useless-yes-tags/144992 and https://community.openstreetmap.org/t/consultation-can-i-just-edit-it-or-should-i-go-through-bot-edit-approval/148117
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "tower:type", "ignored": [
-                "chimney", "stupa", # use man_made= tagging
+                "chimney", "stupa", "water_tower", # use man_made= tagging, is in dubious tags
                 "branch", # deprecated niche power stuff, see https://wiki.openstreetmap.org/wiki/Proposal:Lines_attachments 
                 # also landed in dubious tags
                 "termination", "crossing", # like above
-                "portal", # looks like niche power stuff but not even documented
+                "portal", "transition", # looks like niche power stuff but not even documented
                 "suspension", "anchor", # more power power:type
                 "silo", # should be man_made=silo, added to dubious tags
                 "power", # should be power=tower, added to dubious tags
@@ -361,6 +360,7 @@ class Tests(unittest.TestCase):
             {"key": "crop", "ignored": [
                 "corn", # https://wiki.openstreetmap.org/wiki/Tag:crop%3Dcorn - maybe as validation error? TODO
                 "cana-de-açúcar", # dupe of sugarcane, from bad import (yes, got dubious tags listing)
+                "cana-de-açucar", # see above
                 "protein",  # limited use, nonsense, listed in dubious tags
                 "ofc", # limited use, unclear, https://www.openstreetmap.org/changeset/69586363 + dubious tags listing
                 "Qat", # limited use, bad form
@@ -372,25 +372,34 @@ class Tests(unittest.TestCase):
             {"key": "fitness_station", "ignored": [
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "product", "ignored": [
-            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
-            {"key": "plant", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/product.json
+                # see https://wiki.openstreetmap.org/wiki/Key:product for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/product
+                "Facemasks", "Face_mask", "Face_masks", "brick", "Liquid_soap" # in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "substance", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/substance.json
+                # see https://wiki.openstreetmap.org/wiki/Key:substance for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/substance
+                "heat", "drain", "waterwaste", "stormwater", # see dubious tags
+                # see https://overpass-turbo.eu/s/2xdj
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "waste", "ignored": [
-                "éteignoir", "Domestic", # bad, listed in dubious tags
+                # listed values now: cigarettes, dog_excrement, organic, trash
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/waste.json
+                # see https://wiki.openstreetmap.org/wiki/Key:waste for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/waste
+                "éteignoir", "Domestic", "household", "waste", # bad, listed in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "fishing", "ignored": [
             ], "threshold":100},
             {"key": "community_centre", "ignored": [
-            ], "threshold":100},
-            {"key": "wall", "ignored": [
-                # yes, all bad reported at dubious tags
-                "retaining_wall", # just tag barrier=retaining_wall
-                "Devon", "Innenmauer", "ret", # ???
-                "yes", "wall", # purge those TODO
-                "wood", "stone", "brick", "concrete", # should be material= TODO get official deprecation
-            ], "threshold":100},
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/community_centre.json
+                # currently has some values
+                # see https://wiki.openstreetmap.org/wiki/Key:community_centre for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/community_centre
+                "home_club", "club_house", # see dubious tags listing
+            ], "threshold":50},
             {"key": "seamark:wreck:category", "ignored": [
             ], "threshold":100},
             {"key": "seamark:mooring:category", "ignored": [
@@ -398,30 +407,108 @@ class Tests(unittest.TestCase):
             {"key": "sample_collection", "ignored": [
             ], "threshold":100},
             {"key": "water", "ignored": [
-                "natural", # listed in dubious tags
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/water.json
+                # currently has no values
+                # see https://wiki.openstreetmap.org/wiki/Key:water for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/water
+
+                "no", # never valid here
+
+                "natural", "not_deep", "not deep", "shallow", # listed in dubious tags
                 "spring", # looks misused in variety of ways
                 "pan", "Pan", # landuse=salt_pond duplicate, in dubious tags
             ], "threshold":100},
-            {"key": "artwork_type", "ignored": [
-                "stolperstein", # terrible tagging
-                "dwarf", # https://wiki.openstreetmap.org/wiki/Tag%3Aartwork_type%3Ddwarf ...
-                "star", # https://commons.wikimedia.org/wiki/File:2025-03-26%20Marjanishvili%20Theatre%20walk%20of%20fame.jpg
-            ], "threshold":100},
-            {"key": "shoes", "ignored": [
-            ], "threshold":100},
-            {"key": "clothes", "ignored": [
-                "yes", # shop=clothes clothes=yes is mostly result of iD bug and even when added manually it makes no sense
-                "unisexs", # bad duplicate of unisex
-            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "crossing", "ignored": [
+                "pedestrian", # orthoginal to other, not documented, not highly used
+                "yes", # partially property of area:highway, partially pointless value on footway=crossing
                 # reported in dubious tags now
-                "unknown", "zebra;marked", "standard", "no_traffic_signals", "island", "crossing_island", 
-                "bridge", "stop", "stop_sign", "pedestrian_signals",
+                "unknown", "zebra;marked", "standard", "no_traffic_signals", 
+                "island", "crossing_island", "traffic_island", "footway", 
+                "bridge", "stop", "stop_sign", "pedestrian_signals", 'traffic_signals;marked',
+                "pavement", "pelican", "controlled", "traffic_signals;uncontrolled",
+                "uncontrolled;unmarked", "zebra;uncontrolled", "marked;uncontrolled",
+                "uncontrolled;marked",
+                "controlled;marked",
             ], "threshold":200},
             {"key": "castle_type", "ignored": [
             ], "threshold":100},
             {"key": "military_service", "ignored": [
             ], "threshold":100},
+            {"key": "basin", "ignored": [
+            ], "threshold":100},
+            {"key": "roller_coaster:track", "ignored": [
+            ], "threshold":100},
+            {"key": "bicycle_parking", "ignored": [
+                "yes", "inverted_u", # in dubious tags
+            ], "threshold":100},
+            {"key": "booth", "ignored": [
+            ], "threshold":100},
+            {"key": "consulate", "ignored": [
+            ], "threshold":10},
+            {"key": "diplomatic", "ignored": [
+            ], "threshold":10},
+            {"key": "consulting", "ignored": [
+            ], "threshold":10},
+            {"key": "denotation", "ignored": [
+            ], "threshold":1000},
+            {"key": "dock", "ignored": [
+            ], "threshold":1},
+            {"key": "education", "ignored": [
+                "Educação Infantil", # in dubious tags
+            ], "threshold":100},
+            {"key": "enforcement", "ignored": [
+            ], "threshold":100},
+            {"key": "entrance", "ignored": [
+            ], "threshold":100},
+            {"key": "fuel", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/fuel.json
+                # currently has no values
+                # see https://wiki.openstreetmap.org/wiki/Key:fuel for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/fuel
+            ], "threshold":100},
+            {"key": "gambling", "ignored": [
+            ], "threshold":100},
+            {"key": "government", "ignored": [
+                "yes", # in dubious tags
+            ], "threshold":600},
+            {"key": "grape_variety", "ignored": [
+                "grape", "Grape", # TODO purge?
+            ], "threshold":100},
+            {"key": "guest_house", "ignored": [
+            ], "threshold":100},
+            {"key": "hazard", "ignored": [
+            ], "threshold":100},
+            {"key": "healthcare", "ignored": [
+            ], "threshold":100},
+            {"key": "information", "ignored": [
+                "0208", "0308", "yes", # in dubious tags
+            ], "threshold":100},
+            {"key": "location", "ignored": [
+                "aboveground", # https://www.openstreetmap.org/changeset/173528749 TODO
+                "rii", "plot", "Stocksbridge", "Penistone", "Deepcar",  # in dubious tags
+            ], "threshold":100},
+            {"key": "museum", "ignored": [
+            ], "threshold":100},
+            {"key": "pipeline", "ignored": [
+            ], "threshold":100},
+            {"key": "playground", "ignored": [
+            ], "threshold":100},
+            {"key": "ruins", "ignored": [
+            ], "threshold":100},
+            {"key": "stars", "ignored": [
+            ], "threshold":100},
+            {"key": "support", "ignored": [
+            ], "threshold":200},
+            {"key": "dance:style", "ignored": [
+            ], "threshold":100},
+            {"key": "wholesale", "ignored": [
+                "yes"
+            ], "threshold":100},
+            {"key": "athletics", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/athletics_pitch.json
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/athletics_track.json
+            ], "threshold":50, "callback_for_taginfo_data": split_semicolons},
+            
             {"key": "memorial", "ignored": [
                 # memorial=buoy ? see https://commons.wikimedia.org/wiki/File:Memorial_buoy_to_Jack_Mariti_in_Burry_Port_Harbour_-_geograph.org.uk_-_3602516.jpg
 
@@ -437,9 +524,49 @@ class Tests(unittest.TestCase):
                 # colours go to other field, listed in dubious tags
                 "yellow", "orange", "red", "blue", "brown", "black", "purple", "green"
             ], "threshold":100},
-            
+            {"key": "ceremonial_gate", "ignored": [
+            ], "threshold":2},
+            {"key": "stile", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/stile.json
+                # see https://wiki.openstreetmap.org/wiki/Key:stile for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/stile
+                "wall", # https://www.openstreetmap.org/changeset/110305943
+            ], "threshold":100},
+            {"key": "landuse", "ignored": [
+                "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
+                "logging", # simply bad tagging schema
+                "static_caravan", # maybe landuse=residential + residential=trailer_park (or residential=halting_site ) would be better? Why landuse=static_caravan would be better? landuse=residential with extra tags is in my opinion clearly better as it as accurate and makes easier to process tagged data
+                "highway", # no consensus that it is welcome
+            ], "threshold":40_000},            
             
             # https://github.com/openstreetmap/id-tagging-schema/issues/1829#issuecomment-3581461525
+        ]
+        not_checked = [ #these seem to be not going anyway anywhere
+            {"key": "plant", "ignored": [
+                # https://github.com/search?q=repo%3Aopenstreetmap%2Fid-tagging-schema+plant&type=code
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/plant.json
+                # currently has no values
+                # see https://wiki.openstreetmap.org/wiki/Key:plant for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/plant
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "wall", "ignored": [
+                # yes, all bad reported at dubious tags
+                "retaining_wall", # just tag barrier=retaining_wall
+                "Devon", "Innenmauer", "ret", # ???
+                "yes", "wall", # purge those TODO
+                "wood", "stone", "brick", "concrete", # should be material= TODO get official deprecation
+            ], "threshold":100},
+            {"key": "artwork_type", "ignored": [
+                "stolperstein", # terrible tagging
+                "dwarf", # https://wiki.openstreetmap.org/wiki/Tag%3Aartwork_type%3Ddwarf ...
+                "star", # https://commons.wikimedia.org/wiki/File:2025-03-26%20Marjanishvili%20Theatre%20walk%20of%20fame.jpg
+            ], "threshold":100},
+            {"key": "shoes", "ignored": [
+            ], "threshold":100},
+            {"key": "clothes", "ignored": [
+                "yes", # shop=clothes clothes=yes is mostly result of iD bug and even when added manually it makes no sense
+                "unisexs", # bad duplicate of unisex
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
         ]
         for entry in checked:
             if entry["key"] in ["line_management", "line_attachment"]:
