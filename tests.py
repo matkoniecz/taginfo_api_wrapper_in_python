@@ -498,6 +498,11 @@ class Tests(unittest.TestCase):
             {"key": "stars", "ignored": [
             ], "threshold":100},
             {"key": "support", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/support.json
+                # currently has no values
+                # see https://wiki.openstreetmap.org/wiki/Key:support for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/support
+                'pole 1', 'pole 2', 'poles', # in dubious tags
             ], "threshold":200},
             {"key": "dance:style", "ignored": [
             ], "threshold":100},
