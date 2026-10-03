@@ -590,6 +590,124 @@ class Tests(unittest.TestCase):
                 print(key, "main key is not checked, probably should be included")
 
     def test_run_readme_code_popular_keys_not_used_in_project(self):
+        def is_import_garbage_key(key):
+            banned_key_prefix_indicating_import_garbage = [
+                "tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", 
+                "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:", "LINZ:",
+                "massgis:", "CLC:", "canvec:",
+                "naptan:", # this one inludes some nongarbage (maybe)
+            ]
+            for prefix in banned_key_prefix_indicating_import_garbage:
+                if key.startswith(prefix) == 0:
+                    return True
+            if key in [
+                "addr:TW:dataset", "import", # unwanted import tag
+
+                # more import identifiers - should they be deleted from OSM?
+                "pmfsefin:idedif", "it:fvg:ctrn:code", "it:fvg:ctrn:revision",
+                "lojic:bgnum",
+
+                #bad import, should be purged
+                "standing",
+                "addr:street:type",
+                "building:usage:pl",
+                "at_bev:addr_date",
+                "geobase:acquisitionTechnique",
+                "mml:class",
+            ]:
+                return True
+            return False
+        
+        def key_was_reviewed_and_rejected(key):
+            return key in [
+                # rejected
+                "created_by", # deprecated/discardable, not listed in iD taginfo project
+                "is_in", # deprecated and unwanted
+                "name_1", # weird tagging promoted by old iD versions
+                "circuits", # power mapping of extreme detail
+                "light:count", # really extreme detail
+                "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
+                "naptan:Bearing", # imported, dubious
+                "addr:inclusion", # https://wiki.openstreetmap.org/wiki/Key:addr:*#Tags_for_interpolation_ways - dubios metadata
+                "abandoned:building", # bad tagging
+                "surface_survey", # should be check_date:surface
+
+                "line", # details of power mapping, dubious
+
+                # can be added if comunity requests unprompted
+                "naptan:verified", # import
+                "addr:street:it", "addr:street:de",
+                "addr:city:en", 'addr:district:en', 'addr:province:en', 'addr:street:en', 'addr:subdistrict:en',
+                "addr:streetnumber",
+                "highway:category:pl", "NHS",
+
+                # no organic use (import, organised editing)
+                "building:condition",
+                "project:eurosha_2012", # probably should be purged
+
+                
+                # seems to be in process of rejection by community
+                'brand:wikipedia',
+
+                # dubious to show
+                "opening_hours:signed", "nohousenumber", "maxweight:signed", "noref",
+
+                # badly defined mess
+                "shoulder",
+            ]
+
+        def already_requested(key):
+            return key in [
+                "noname", # https://github.com/openstreetmap/id-tagging-schema/issues/1099
+                "lanes:backward", "lanes:forward", # https://github.com/openstreetmap/id-tagging-schema/issues/2820
+                "crossing:signals", # https://github.com/openstreetmap/id-tagging-schema/issues/1118
+                "roof:levels", # https://github.com/openstreetmap/id-tagging-schema/issues/2053
+                "building:use", # https://github.com/openstreetmap/id-tagging-schema/issues/2405
+                "generator:solar:modules", # https://github.com/openstreetmap/id-tagging-schema/issues/169
+                "unsigned_ref", # https://github.com/openstreetmap/id-tagging-schema/issues/77
+
+                # require grouping
+                "old_name", # https://github.com/openstreetmap/id-tagging-schema/issues/1288
+                "int_name", # https://github.com/openstreetmap/id-tagging-schema/issues/1289
+
+                # https://github.com/openstreetmap/id-tagging-schema/issues/205
+                "cycleway:surface", "footway:surface", 
+
+                # listed in test_tags_used_in_project function
+                "roof:material",
+            ]
+
+        def no_need_to_complain_about_missing_support(key):
+            if is_import_garbage_key(key):
+                return True
+            if key_was_reviewed_and_rejected(key):
+                return True
+            if already_requested(key):
+                return True
+            if key in [
+                # TODO - consider
+                "check_date:opening_hours",
+                "sidewalk:both:surface",
+                "sidewalk:left:surface",
+                "sidewalk:right:surface",
+                "sidewalk:surface",
+                "genus:de", "genus:fr", "species:en",
+
+                # requires group support TODO
+                'maxspeed:bus',
+            ]:
+                return True
+            banned_key_prefix_for_other_reasons = [
+                'source:', "source_", # we are nowadays referring to tag it on changeset
+                "name:", # taginfo listing bug, see https://github.com/openstreetmap/id-tagging-schema/issues/2879
+                "light:", # extreme detail of lights
+                "is_in:",
+            ]
+            for prefix in banned_key_prefix_for_other_reasons:
+                if key.startswith(prefix) == 0:
+                    return True
+            return False
+
         # no issue created for it at https://github.com/openstreetmap/id-tagging-schema/issues
         # right now it provides no useful info (more entries need to be skipped or verified)
         project = "id_editor"
@@ -603,102 +721,37 @@ class Tests(unittest.TestCase):
         finished = False
         while not finished:
             for entry in taginfo.query.get_page_of_all_keys_with_wiki_page(page):
+                key = entry["key"]
+                if key in supported:
+                    continue
                 if(entry['count_all'] < threshold):
                     finished = True
                     break
-                key = entry["key"]
-                banned_key_prefix_indicating_import_garbage = ["tiger:", "nhd:", "NHD:", "lacounty:", "ref:", "nysgissam:", "nycdoitt:", "yh:", "building:ruian:", "gnis:", "osak:", "maaamet:", "chicago:", "LINZ:",
-                "massgis:", "CLC:", "canvec:",
-                "naptan:", # this one inludes some nongarbage (maybe)
-                ]
-                banned_key_prefix_for_other_reasons = [
-                    'source:', "source_", # we are nowadays referring to tag it on changeset
-                    "name:", # taginfo listing bug, see https://github.com/openstreetmap/id-tagging-schema/issues/2879
-                    "light:", # extreme detail of lights
-                    "is_in:",
-                ]
-                matches_blacklisted = False
-                for prefix in banned_key_prefix_indicating_import_garbage + banned_key_prefix_for_other_reasons:
-                    if key.find(prefix) == 0:
-                        matches_blacklisted = True
-                        break
-                if matches_blacklisted:
+                if no_need_to_complain_about_missing_support(key):
                     continue
-                if key in [
-                    # rejected
-                    "created_by", # deprecated/discardable, not listed in iD taginfo project
-                    "is_in", # deprecated and unwanted
-                    "name_1", # weird tagging promoted by old iD versions
-                    "addr:TW:dataset", "import", # unwanted import tag
-                    "pmfsefin:idedif", # more import identifiers
-                    "circuits", # power mapping of extreme detail
-                    "light:count", # really extreme detail
-                    "addr:street:sym_ul", "addr:city:simc", "raba:id", "teryt:simc", # local import identifier
-                    "naptan:Bearing", # imported, dubious
-                    "addr:inclusion", # https://wiki.openstreetmap.org/wiki/Key:addr:*#Tags_for_interpolation_ways - dubios metadata
-                    "abandoned:building", # bad tagging
-                    "surface_survey", # should be check_date:surface
 
-                    "line", # details of power mapping, dubious
-
-                    # can be added if comunity requests unprompted
-                    "naptan:verified", # import
-                    "addr:street:it", "addr:street:de",
-                    "addr:city:en", 'addr:district:en', 'addr:province:en', 'addr:street:en', 'addr:subdistrict:en',
-                    "addr:streetnumber",
-                    "highway:category:pl",
-
-                    # no organic use (import, organised editing)
-                    "building:condition",
-
-                    #bad import, should be purged
-                    "standing",
-                    "addr:street:type",
-                    "building:usage:pl",
-                    
-                    # seems to be in process of rejection by community
-                    'brand:wikipedia',
-
-                    # dubious
-                    "opening_hours:signed", "nohousenumber", "maxweight:signed", "noref",
-                ]:
-                    continue
-                if key in [
-                    # already requested
-                    "noname", # https://github.com/openstreetmap/id-tagging-schema/issues/1099
-                    "lanes:backward", "lanes:forward", # https://github.com/openstreetmap/id-tagging-schema/issues/2820
-                    "old_name", # https://github.com/openstreetmap/id-tagging-schema/issues/1288
-                    "crossing:signals", # https://github.com/openstreetmap/id-tagging-schema/issues/1118
-                    "roof:levels", # https://github.com/openstreetmap/id-tagging-schema/issues/2053
-
-                    # listed in test_tags_used_in_project function
-                    "roof:material",
-
-                    # TODO - consider
-                    "check_date:opening_hours",
-                    "sidewalk:both:surface",
-                    "sidewalk:left:surface",
-                    "sidewalk:right:surface",
-                    "sidewalk:surface",
-                    "genus:de", "genus:fr",
-
-                    # requires group support TODO
-                    'maxspeed:bus',
-                ]:
-                    continue
-                if key not in supported:
-                    count = int(entry["count_all"])
-                    formatted_count = str(int(count/1000))+"k"
-                    if count < 1000:
-                        formatted_count = str(count)
-                    print(key, formatted_count, "missing from iD presets with no support requested")
-                    expected_support.append({"key": key, "count": formatted_count})
+                count = int(entry["count_all"])
+                formatted_count = str(int(count/1000))+"k"
+                if count < 1000:
+                    formatted_count = str(count)
+                expected_support.append({"key": key, "count": formatted_count})
             page += 1
+
+        extra_info = {
+            "colour:arrow": "see https://wiki.openstreetmap.org/wiki/Relation:destination_sign",
+        }
+        for entry in expected_support:
+            key = entry["key"]
+            extra_info_for_key = extra_info.get(key, "")
+            print(key, entry["count"], "missing from iD presets with no support requested", extra_info_for_key)
 
         for entry in expected_support:
             link = "https://taginfo.openstreetmap.org/keys/" + entry["key"]
             text = "`" + entry["key"] + "` " + entry["count"]
+            extra_info_for_key = extra_info.get(key, "")
             linked_markdown_text = "[" + text + "](" + link + ")"
+            if extra_info_for_key != "":
+                linked_markdown_text += " " + extra_info_for_key
             print(linked_markdown_text)
 
     def test_run_readme_popularity(self):
