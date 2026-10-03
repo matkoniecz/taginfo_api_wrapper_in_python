@@ -288,12 +288,6 @@ class Tests(unittest.TestCase):
                 "offset_pent_roof", # not documented, niche, appears in huge jump - https://www.openstreetmap.org/changeset/144129131 TODO look for who else added it
                 "double_saltbox", "triple_saltbox", "quadruple_saltbox", # https://wiki.openstreetmap.org/w/index.php?title=Key:roof:shape&diff=prev&oldid=2887374
             ], "threshold": 1000},
-            {"key": "roof:material", "ignored": [
-                "Asbestos", "zink", "metal", "gras", # typos reported now in dubious tags
-                "cgi", # see https://www.openstreetmap.org/changeset/70389111 for meaning - see https://taginfo.openstreetmap.org/tags/roof:material=cgi#chronology for why it should not be supported (TODO: record their answer on wiki if they will fail)
-                "rcc", # unclear - reported now in dubious tags, mass added, asked in https://www.openstreetmap.org/changeset/50152325 (see also https://www.openstreetmap.org/user_blocks/7006 ) TODO
-                "metal sheet", # dupe of metal_sheet
-            ], "threshold":2_000},
             {"key": "orienteering", "ignored": [
             ], "threshold":1_000},
             {"key": "healthcare:speciality", "ignored": [
