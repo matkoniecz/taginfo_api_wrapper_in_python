@@ -531,12 +531,6 @@ class Tests(unittest.TestCase):
             ], "threshold":100},
             {"key": "ceremonial_gate", "ignored": [
             ], "threshold":2},
-            {"key": "stile", "ignored": [
-                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/stile.json
-                # see https://wiki.openstreetmap.org/wiki/Key:stile for expected ones
-                # https://osmberlin.github.io/tagging-schema-browser/field/stile
-                "wall", # https://www.openstreetmap.org/changeset/110305943
-            ], "threshold":100},
             {"key": "landuse", "ignored": [
                 "village_green", # see https://github.com/openstreetmap/id-tagging-schema/issues/15#issuecomment-3019711260
                 "logging", # simply bad tagging schema
@@ -546,7 +540,17 @@ class Tests(unittest.TestCase):
             
             # https://github.com/openstreetmap/id-tagging-schema/issues/1829#issuecomment-3581461525
         ]
-        not_checked = [ #these seem to be not going anyway anywhere
+        not_checked = [
+            # https://github.com/openstreetmap/id-tagging-schema/issues/3008
+            # TODO implement it myself in presets?
+            {"key": "stile", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/stile.json
+                # see https://wiki.openstreetmap.org/wiki/Key:stile for expected ones
+                # https://osmberlin.github.io/tagging-schema-browser/field/stile
+                "wall", # https://www.openstreetmap.org/changeset/110305943
+            ], "threshold":100},
+
+            #these seem to be not going anyway anywhere
             {"key": "plant", "ignored": [
                 # https://github.com/search?q=repo%3Aopenstreetmap%2Fid-tagging-schema+plant&type=code
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/plant.json
