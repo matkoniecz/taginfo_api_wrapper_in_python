@@ -36,7 +36,11 @@ class Tests(unittest.TestCase):
                 print(key, "=", entry['value'], str(int(entry['count']/1000)) + "k")
 
     def test_tags_used_in_project(self):
-        def show_popular_tags_not_supported_by_project(project, key, excluded_values, threshold, callback_for_taginfo_data=None):
+        def generate_text_for_popular_tags_not_supported_by_project(project, key, excluded_values, threshold, callback_for_taginfo_data=None):
+            returned = {
+                "markdown": "",
+                "console": "",
+            }
             expected_support = []
             cached_value_info = {}
             collected_taginfo_entries = []
@@ -61,9 +65,12 @@ class Tests(unittest.TestCase):
                     value_count = str(int(value/1000)) + "k"
                     if value < 2000:
                         value_count = str(value)
-                    text = "`" + key + " = " + cached_value_info[entry]['value'] + "` " + value_count
-                    linked_markdown_text = "* [ ] [" + text + "](" + link + ")"
-                    print(linked_markdown_text)
+                    markdown_text = "`" + key + " = " + cached_value_info[entry]['value'] + "` " + value_count
+                    linked_markdown_text = "* [ ] [" + markdown_text + "](" + link + ")"
+                    returned["markdown"] += linked_markdown_text + "\n"
+                    console_text = "" + key + " = " + cached_value_info[entry]['value'] + " " + value_count + " " + link
+                    returned["console"] += console_text + "\n"
+            return returned
 
         def split_semicolons(collected_taginfo_entries):
             collected_info_per_split_value = defaultdict(int)
@@ -588,13 +595,19 @@ class Tests(unittest.TestCase):
                 "unisexs", # bad duplicate of unisex
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
         ]
+        console = ""
+        markdown = ""
         for entry in checked:
             if entry["key"] in ["line_management", "line_attachment"]:
                 raise Exception("not viable by listing, these tags got own intricate syntax")
             callback_for_taginfo_data = None
             if "callback_for_taginfo_data" in entry:
                 callback_for_taginfo_data = entry["callback_for_taginfo_data"]
-            show_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"], callback_for_taginfo_data)
+            got = generate_text_for_popular_tags_not_supported_by_project("id_editor", entry["key"], entry["ignored"], entry["threshold"], callback_for_taginfo_data)
+            console += got["console"]
+            markdown += got["markdown"]
+        print(markdown)
+        print(console)
 
 
         for key in tag_knowledge.typical_unprefixed_main_keys():
