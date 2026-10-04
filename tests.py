@@ -80,7 +80,7 @@ class Tests(unittest.TestCase):
             {"key": "traffic_calming", "ignored": [
                 "median", # https://github.com/openstreetmap/id-tagging-schema/issues/1641#issuecomment-3148621843
                 "no", # it seems to be that support in any way is not really needed or useful
-            ], "threshold":2_800},
+            ], "threshold":800},
             {"key": "attraction", "ignored": [
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/attraction.json
                 "yes",
@@ -239,10 +239,14 @@ class Tests(unittest.TestCase):
                 "connection", "inverter", "compensator", "circuit", # confusing expert internal stuff without clear wiki docs
                 "cable_distribution", # looks imported and without documentation
             ], "threshold": 25_000},
-            {"key": "plant:source", "ignored": [], "threshold":250},
-            {"key": "generator:source", "ignored": [], "threshold":250},
-            {"key": "plant:method", "ignored": [], "threshold":200},
-            {"key": "generator:method", "ignored": [], "threshold":200},
+            {"key": "plant:source", "ignored": [], "threshold":25},
+            {"key": "generator:source", "ignored": [
+                "no", # see dubious tags
+            ], "threshold":25},
+            {"key": "plant:method", "ignored": [], "threshold":25},
+            {"key": "generator:method", "ignored": [
+                "solar_thermal", "yes", # see dubious tags                
+            ], "threshold":25},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
                 "line", # Is it for both overground and underground? If for underground what about verifiability
@@ -274,6 +278,8 @@ class Tests(unittest.TestCase):
             ], "threshold":1_000},
             {"key": "playground", "ignored": [], "threshold":2_000},
             {"key": "roof:shape", "ignored": [
+                "equal_hipped", # https://wiki.openstreetmap.org/wiki/Tag:roof:shape%3Dequal_hipped - should be a separate property
+                "gabled_height_moved_flat", # unclear, limited use, in dubious tags
                 "pitched", # roof:shape=skillion was intended here? Or roof:shape=gabled? See https://wiki.openstreetmap.org/wiki/Tag:roof:shape=pitched
                 '2 faces (pitched)', '2 face (pitched)', # duplicates =pitched and therefore =gabled
                 "slanted", # roof:shape=skillion was intended here, likely
@@ -287,7 +293,7 @@ class Tests(unittest.TestCase):
                 "round_gabled", # featured at https://wiki.openstreetmap.org/wiki/OSM-4D/Roof_table only
                 "offset_pent_roof", # not documented, niche, appears in huge jump - https://www.openstreetmap.org/changeset/144129131 TODO look for who else added it
                 "double_saltbox", "triple_saltbox", "quadruple_saltbox", # https://wiki.openstreetmap.org/w/index.php?title=Key:roof:shape&diff=prev&oldid=2887374
-            ], "threshold": 1000},
+            ], "threshold": 600},
             {"key": "orienteering", "ignored": [
             ], "threshold":1_000},
             {"key": "healthcare:speciality", "ignored": [
@@ -297,10 +303,11 @@ class Tests(unittest.TestCase):
             {"key": "leaf_cycle", "ignored": [
             ], "threshold":1_000},
             {"key": "manhole", "ignored": [
-                "unknown",
+                "yes" # man_made=manhole manhole=yes
+                "unknown", # in dubious tags
             ], "threshold":1_000},
             {"key": "bollard", "ignored": [
-                'FR:J1', # bad values, listed in dubious tags
+                'FR:J1', "light", # bad values, listed in dubious tags
 
                 'unremovable', # TODO Use bollard=fixed - scattered across world
                 'irremovable', # TODO Use bollard=fixed - just few groups https://overpass-turbo.eu/s/2x62 - https://www.openstreetmap.org/note/5541804 https://www.openstreetmap.org/note/5541803 https://www.openstreetmap.org/note/5541802 - if no response check who_added output for this tag
@@ -322,7 +329,7 @@ class Tests(unittest.TestCase):
             ], "threshold":100},
             {"key": "beauty", "ignored": [
                 'массаж', # not in English
-            ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
+            ], "threshold":50, "callback_for_taginfo_data": split_semicolons},
             {"key": "animal_boarding", "ignored": [
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
             {"key": "animal_breeding", "ignored": [
@@ -366,10 +373,12 @@ class Tests(unittest.TestCase):
             {"key": "fitness_station", "ignored": [
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "product", "ignored": [
+                "Windows", "Chairs", "Doors", "Beds", "", # just bad... TODO clean it in data
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/product.json
                 # see https://wiki.openstreetmap.org/wiki/Key:product for expected ones
                 # https://osmberlin.github.io/tagging-schema-browser/field/product
                 "Facemasks", "Face_mask", "Face_masks", "brick", "Liquid_soap" # in dubious tags
+                "Tambak Garam", "Ikan dan Udang", # in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "substance", "ignored": [
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/substance.json
@@ -446,6 +455,8 @@ class Tests(unittest.TestCase):
             {"key": "denotation", "ignored": [
             ], "threshold":1000},
             {"key": "dock", "ignored": [
+                "A", "B", "C", "D", "E", "F", "G", # sort-of-address
+                "floatable", # in dubious tags
             ], "threshold":1},
             {"key": "education", "ignored": [
                 "Educação Infantil", # in dubious tags
@@ -469,6 +480,7 @@ class Tests(unittest.TestCase):
                 "grape", "Grape", # TODO purge?
             ], "threshold":100},
             {"key": "guest_house", "ignored": [
+                "guest_house", # proposed bot edit, went nowhere
             ], "threshold":100},
             {"key": "hazard", "ignored": [
             ], "threshold":100},
@@ -478,8 +490,11 @@ class Tests(unittest.TestCase):
                 "0208", "0308", "yes", # in dubious tags
             ], "threshold":100},
             {"key": "location", "ignored": [
+                # see https://wiki.openstreetmap.org/wiki/Key:location for expected ones
+                "ground", # in dubious tags, dupe of location=surface
+                "pole", # in dubious tags, dupe of support=pole
                 "aboveground", # https://www.openstreetmap.org/changeset/173528749 TODO
-                "rii", "plot", "Stocksbridge", "Penistone", "Deepcar",  # in dubious tags
+                "rii", "plot", "Stocksbridge", "Penistone", "Deepcar",  # wat? in dubious tags
             ], "threshold":100},
             {"key": "museum", "ignored": [
             ], "threshold":100},
@@ -496,7 +511,8 @@ class Tests(unittest.TestCase):
                 # currently has no values
                 # see https://wiki.openstreetmap.org/wiki/Key:support for expected ones
                 # https://osmberlin.github.io/tagging-schema-browser/field/support
-                'pole 1', 'pole 2', 'poles', # in dubious tags
+                'wall_mounted', # duplicate of wall
+                'pole 1', 'pole 2', 'poles', 'wall_mount', 'ornamental', # in dubious tags
             ], "threshold":200},
             {"key": "dance:style", "ignored": [
             ], "threshold":100},
@@ -508,13 +524,6 @@ class Tests(unittest.TestCase):
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/athletics_track.json
             ], "threshold":50, "callback_for_taginfo_data": split_semicolons},
             
-            {"key": "memorial", "ignored": [
-                # memorial=buoy ? see https://commons.wikimedia.org/wiki/File:Memorial_buoy_to_Jack_Mariti_in_Burry_Port_Harbour_-_geograph.org.uk_-_3602516.jpg
-
-                'koshinto', 'jizo', '歌碑', "star", "gate", "light", "boat", # unclear, listed in dubious tags
-                "memorial", "yes", "person", "public_person", # unspecific, listed in dubious tags
-                'de_verloren_sleutel', 'Distanzsäule', 'stein_der_erinnerung', # not in English, listed in dubious tags
-            ], "threshold":1000}, # this will not escape taginfo hell any time soon...
             {"key": "marker", "ignored": [
                 'sandstone', # TODO should be material=sandstone
                 '右側', 'cng', "stile", # meaning unclear, listed in dubious tags
@@ -544,6 +553,14 @@ class Tests(unittest.TestCase):
                 "wall", # https://www.openstreetmap.org/changeset/110305943
             ], "threshold":100},
 
+            # handle memorial=bench statue issues first
+            {"key": "memorial", "ignored": [
+                # memorial=buoy ? see https://commons.wikimedia.org/wiki/File:Memorial_buoy_to_Jack_Mariti_in_Burry_Port_Harbour_-_geograph.org.uk_-_3602516.jpg
+
+                'koshinto', 'jizo', '歌碑', "star", "gate", "light", "boat", # unclear, listed in dubious tags
+                "memorial", "yes", "person", "public_person", # unspecific, listed in dubious tags
+                'de_verloren_sleutel', 'Distanzsäule', 'stein_der_erinnerung', # not in English, listed in dubious tags
+            ], "threshold":1000}, # this will not escape taginfo hell any time soon...
             #these seem to be not going anyway anywhere
             {"key": "plant", "ignored": [
                 # https://github.com/search?q=repo%3Aopenstreetmap%2Fid-tagging-schema+plant&type=code
