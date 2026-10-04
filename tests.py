@@ -248,11 +248,15 @@ class Tests(unittest.TestCase):
             ], "threshold": 25_000},
             {"key": "plant:source", "ignored": [], "threshold":25},
             {"key": "generator:source", "ignored": [
-                "no", # see dubious tags
+                "power grid", # power_grid if anything
+                "no", "No", "generator", "unspecified", "1", "solar no", "air", # see dubious tags
+                "solar;power grid", "solar;power_grid", # see dubious tags
             ], "threshold":25},
-            {"key": "plant:method", "ignored": [], "threshold":25},
+            {"key": "plant:method", "ignored": [
+                "solar_thermal", "yes", "solar_thermal_collector", "combined_cycle", # see dubious tags                
+            ], "threshold":20},
             {"key": "generator:method", "ignored": [
-                "solar_thermal", "yes", # see dubious tags                
+                "solar_thermal", "yes", "solar_thermal_collector", "combined_cycle", # see dubious tags                
             ], "threshold":25},
             {"key": "telecom", "ignored": [
                 "antenna", # duplicates other tag, imported by bad import - https://wiki.openstreetmap.org/wiki/Tag:telecom%3Dantenna
@@ -384,7 +388,7 @@ class Tests(unittest.TestCase):
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/product.json
                 # see https://wiki.openstreetmap.org/wiki/Key:product for expected ones
                 # https://osmberlin.github.io/tagging-schema-browser/field/product
-                "Facemasks", "Face_mask", "Face_masks", "brick", "Liquid_soap" # in dubious tags
+                "Facemasks", "Face_mask", "Face_masks", "brick", "Liquid_soap", # in dubious tags
                 "Tambak Garam", "Ikan dan Udang", # in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "substance", "ignored": [
