@@ -818,7 +818,8 @@ class Tests(unittest.TestCase):
         print()
         print("intended to show that such short-term queries are likely to be a problem, as taginfo may have delay in updating and last few days may be often unavailable:")
         print(taginfo.query.count_new_appearances_of_key_historic_data("building", 1), "new building=* objects since yesterday")
-        print(str(int(taginfo.query.count_new_appearances_of_key_historic_data("building", 100)/1000))+"k", "new building=* objects in last 20 days")
+        building_days = 10
+        print(str(int(taginfo.query.count_new_appearances_of_key_historic_data("building", building_days)/1000))+"k", "new building=* objects in last", building_days, "days")
 
     def test_handle_nonascii_in_tags(self):
         taginfo.query.wiki_pages_of_tag("shop", "açaí")
