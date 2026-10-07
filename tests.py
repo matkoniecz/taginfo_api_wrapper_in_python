@@ -361,6 +361,7 @@ class Tests(unittest.TestCase):
                 "power", # should be power=tower, added to dubious tags
                 "concrete", # should be material=concrete, added to dubious tags
                 "advertising", "BT", "HT", # unclear, not documented, added to dubious tags
+                "tower", # added to dubious tags
             ], "threshold":100},
             {"key": "telescope:type", "ignored": [
             ], "threshold":100},
@@ -381,14 +382,13 @@ class Tests(unittest.TestCase):
             ], "threshold":400, "callback_for_taginfo_data": split_semicolons},
             {"key": "collector", "ignored": [
             ], "threshold":10, "callback_for_taginfo_data": split_semicolons},
-            {"key": "fitness_station", "ignored": [
-            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "product", "ignored": [
                 "Windows", "Chairs", "Doors", "Beds", "", # just bad... TODO clean it in data
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/product.json
                 # see https://wiki.openstreetmap.org/wiki/Key:product for expected ones
                 # https://osmberlin.github.io/tagging-schema-browser/field/product
-                "Facemasks", "Face_mask", "Face_masks", "brick", "Liquid_soap", # in dubious tags
+                "Facemasks", "Face_mask", "Face_masks", "masks", "brick", "Liquid_soap", # in dubious tags
+                "Cassava_flour", # in dubious tags
                 "Tambak Garam", "Ikan dan Udang", # in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "substance", "ignored": [
@@ -403,7 +403,8 @@ class Tests(unittest.TestCase):
                 # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/waste.json
                 # see https://wiki.openstreetmap.org/wiki/Key:waste for expected ones
                 # https://osmberlin.github.io/tagging-schema-browser/field/waste
-                "éteignoir", "Domestic", "household", "waste", # bad, listed in dubious tags
+                "household", "waste", "litter", "mixed", "excrements", "plastic", # likely bad, listed in dubious tags
+                "éteignoir", "Domestic", # bad, listed in dubious tags
             ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
             {"key": "fishing", "ignored": [
             ], "threshold":100},
@@ -453,21 +454,17 @@ class Tests(unittest.TestCase):
             {"key": "roller_coaster:track", "ignored": [
             ], "threshold":100},
             {"key": "bicycle_parking", "ignored": [
-                "yes", "inverted_u", # in dubious tags
-            ], "threshold":100},
-            {"key": "booth", "ignored": [
+                "yes", "inverted_u", "covered", # in dubious tags
             ], "threshold":100},
             {"key": "consulate", "ignored": [
-            ], "threshold":10},
+            ], "threshold":3},
             {"key": "diplomatic", "ignored": [
-            ], "threshold":10},
+            ], "threshold":3},
             {"key": "consulting", "ignored": [
-            ], "threshold":10},
-            {"key": "denotation", "ignored": [
-            ], "threshold":1000},
+            ], "threshold":3},
             {"key": "dock", "ignored": [
                 "A", "B", "C", "D", "E", "F", "G", # sort-of-address
-                "floatable", # in dubious tags
+                "floatable", "muelle", "platjeta", # in dubious tags
             ], "threshold":1},
             {"key": "education", "ignored": [
                 "Educação Infantil", # in dubious tags
@@ -487,27 +484,21 @@ class Tests(unittest.TestCase):
             {"key": "government", "ignored": [
                 "yes", # in dubious tags
             ], "threshold":600},
-            {"key": "grape_variety", "ignored": [
-                "grape", "Grape", # TODO purge?
-            ], "threshold":100},
             {"key": "guest_house", "ignored": [
                 "guest_house", # proposed bot edit, went nowhere
             ], "threshold":100},
             {"key": "hazard", "ignored": [
-            ], "threshold":100},
+                # https://wiki.openstreetmap.org/wiki/Key:hazard
+                # open ended list sadly
+                "deer", "wild_animal", "wild_animals", "cattle", "cow", "horse", "horses", "moose", "reindeer", # in dubious tags
+                "yes", # in dubious tags
+            ], "threshold":500},
+            {"key": "hazard:animal", "ignored": [
+            ], "threshold":500},
             {"key": "healthcare", "ignored": [
             ], "threshold":100},
             {"key": "information", "ignored": [
                 "0208", "0308", "yes", # in dubious tags
-            ], "threshold":100},
-            {"key": "location", "ignored": [
-                # see https://wiki.openstreetmap.org/wiki/Key:location for expected ones
-                "ground", # in dubious tags, dupe of location=surface
-                "pole", # in dubious tags, dupe of support=pole
-                "aboveground", # https://www.openstreetmap.org/changeset/173528749 TODO
-                "rii", "plot", "Stocksbridge", "Penistone", "Deepcar",  # wat? in dubious tags
-            ], "threshold":100},
-            {"key": "museum", "ignored": [
             ], "threshold":100},
             {"key": "pipeline", "ignored": [
             ], "threshold":100},
@@ -555,6 +546,39 @@ class Tests(unittest.TestCase):
             # https://github.com/openstreetmap/id-tagging-schema/issues/1829#issuecomment-3581461525
         ]
         not_checked = [
+            {"key": "grape_variety", "ignored": [
+                # does not seem promising for value listing
+                "grape", "Grape", # TODO purge? Is in edit being prepared
+            ], "threshold":100},
+            {"key": "museum", "ignored": [
+                # does not seem promising
+            ], "threshold":100},
+            {"key": "fitness_station", "ignored": [
+                # https://github.com/openstreetmap/id-tagging-schema/blob/main/data/fields/fitness_station.json
+                # see https://wiki.openstreetmap.org/wiki/Key:fitness_station for expected ones
+                "yes", "fitness_station", # in dubious tags
+            ], "threshold":100, "callback_for_taginfo_data": split_semicolons},
+            {"key": "location", "ignored": [
+                # https://wiki.openstreetmap.org/wiki/Talk:Key:support#wall_and_wall_mounted_-_that_is_likely_the_same
+                # echhh
+                
+                # see https://wiki.openstreetmap.org/wiki/Key:location for expected ones
+                "ground", # in dubious tags, dupe of location=surface
+                "pole", # in dubious tags, dupe of support=pole
+                "aboveground", # https://www.openstreetmap.org/changeset/173528749 TODO
+                "kiosk", # suspect power mapping, see https://www.openstreetmap.org/node/13535086295 - see also https://taginfo.openstreetmap.org/tags/location=kiosk#overview
+                "permanent", "temporary", "covered", "podium", "heliostat", "under_roof", # in dubious tags
+                "rii", "plot", "Stocksbridge", "Penistone", "Deepcar", "yes", # wat? in dubious tags
+            ], "threshold":100},
+            {"key": "booth", "ignored": [
+                # https://wiki.openstreetmap.org/wiki/Key%3Abooth
+                # models of phone booths
+            ], "threshold":100},
+            {"key": "denotation", "ignored": [
+                # https://wiki.openstreetmap.org/wiki/Talk:Key:denotation#What_about_landmark_natural_monuments?
+                # https://wiki.openstreetmap.org/wiki/Talk:Tag:denotation%3Durban
+                # I would prefer to deprecate and replace it altogether but it seems that there are far better targets
+            ], "threshold":1000},
             # https://github.com/openstreetmap/id-tagging-schema/issues/3008
             # TODO implement it myself in presets?
             {"key": "stile", "ignored": [
